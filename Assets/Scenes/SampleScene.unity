@@ -4574,6 +4574,7 @@ GameObject:
   - component: {fileID: 3230671602741307370}
   - component: {fileID: 3230671602743068149}
   - component: {fileID: 3230671602743068150}
+  - component: {fileID: 3230671602743068151}
   m_Layer: 0
   m_Name: Earth
   m_TagString: Untagged
@@ -4608,6 +4609,21 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 20.195032
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3230671602743068151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3230671602743068148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9932eb3839bfa2e4fa72086e274cc3df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRaycast:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &3230671602743293248
 Transform:
   m_ObjectHideFlags: 0
@@ -4615,10 +4631,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3230671602743068148}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0.6}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}

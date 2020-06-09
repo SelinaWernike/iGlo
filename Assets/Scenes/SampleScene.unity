@@ -4575,6 +4575,8 @@ GameObject:
   - component: {fileID: 3230671602743068149}
   - component: {fileID: 3230671602743068150}
   - component: {fileID: 3230671602743068151}
+  - component: {fileID: 3230671602743068152}
+  - component: {fileID: 3230671602743068153}
   m_Layer: 0
   m_Name: Earth
   m_TagString: Untagged
@@ -4624,6 +4626,33 @@ MonoBehaviour:
   onRaycast:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3230671602743068152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3230671602743068148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ac657fa8e2175439c49ea2f2741dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 100
+  numCirclePoints: 30
+  color: {r: 1, g: 0, b: 0.7256975, a: 0}
+--- !u!114 &3230671602743068153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3230671602743068148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f31581a7db7b5640b8b02980a732747, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3230671602743293248
 Transform:
   m_ObjectHideFlags: 0

@@ -45,12 +45,15 @@ public class GeocodeAPI : MonoBehaviour
 
     private void Update()
     {
+        // TODO: example code, has to be removed when done!
         if (Input.GetKeyDown(KeyCode.N))
         {
             Result result = Forward("Deutschland", "de");
-            visualizer.DrawPoint(result.geometry.lat, result.geometry.lng);
+            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 50, false);
             result = Forward("Frankreich", "fr");
-            visualizer.DrawPoint(result.geometry.lat, result.geometry.lng);
+            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 100, false);
+            result = Forward("Polen", "pl");
+            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 0, true);
         }
         else if (Input.GetKeyDown(KeyCode.M))
         {

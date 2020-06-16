@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
+public enum VisualizationMethod
+{
+    SATURATION,
+    RADIUS
+}
+
 public class VisualizeDataScript : MonoBehaviour
 {
     private const int EARTH_RADIUS = 6378;
@@ -12,6 +18,8 @@ public class VisualizeDataScript : MonoBehaviour
     private int numCirclePoints;
     [SerializeField]
     private Color color;
+    [SerializeField]
+    private VisualizationMethod method;
     private Texture2D texture;
     private Color[] original;
     private List<Record> values;
@@ -51,11 +59,23 @@ public class VisualizeDataScript : MonoBehaviour
 
     public void Visualize(float latitude, float longitude, float data, float min, float max)
     {
-        float h, s, v;
-        Color.RGBToHSV(color, out h, out s, out v);
-        float newSaturation = Map(data, min, max, 0, 1);
-        DrawPoint(latitude, longitude, radius, Color.HSVToRGB(h, newSaturation, v));
-        texture.Apply(true);
+        switch (method)
+        {
+            case VisualizationMethod.SATURATION:
+                {
+                    float h, s, v;
+                    Color.RGBToHSV(color, out h, out s, out v);
+                    float newSaturation = Map(data, min, max, 0, 1);
+                    DrawPoint(latitude, longitude, radius, Color.HSVToRGB(h, newSaturation, v));
+                    break;
+                }
+            case VisualizationMethod.RADIUS:
+                {
+                    float newRadius = Map(data, min, max, radius / 4, radius);
+                    DrawPoint(latitude, longitude, newRadius, color);
+                    break;
+                }
+        }
     }
 
     private void DrawPoint(float latitude, float longitude, float radius, Color color)
@@ -87,8 +107,8 @@ public class VisualizeDataScript : MonoBehaviour
                 }
             }
         }
+        texture.Apply(true);
     }
-
 
     private bool PointInside(int x, int y, Vector2Int[] points)
     {
@@ -129,5 +149,4 @@ public class VisualizeDataScript : MonoBehaviour
             this.data = data;
         }
     }
-
 }

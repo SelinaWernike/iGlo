@@ -4596,7 +4596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a431d71a8dbfd584a86d6ff7cec68600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxScale: 0.024
+  maxScale: 0.018
   minScale: 0
 --- !u!135 &3230671602743068150
 SphereCollider:
@@ -4638,10 +4638,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ac657fa8e2175439c49ea2f2741dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 100
+  radius: 150
   numCirclePoints: 24
   color: {r: 0, g: 1, b: 0, a: 0}
-  maximumPoints: 9
+  method: 2
 --- !u!114 &3230671602743068153
 MonoBehaviour:
   m_ObjectHideFlags: 0

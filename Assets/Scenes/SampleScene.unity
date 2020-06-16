@@ -4639,8 +4639,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 100
-  numCirclePoints: 30
-  color: {r: 1, g: 0, b: 0.7256975, a: 0}
+  numCirclePoints: 24
+  color: {r: 0, g: 1, b: 0, a: 0}
+  maximumPoints: 9
 --- !u!114 &3230671602743068153
 MonoBehaviour:
   m_ObjectHideFlags: 0

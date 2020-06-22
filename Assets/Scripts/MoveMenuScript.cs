@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
-public class MoveMenuScript : MonoBehaviour
+public class MoveMenuScript : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private float changePerSecond;
@@ -38,6 +39,11 @@ public class MoveMenuScript : MonoBehaviour
                 running = false;
             }
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnActivate();
     }
 
     public void OnActivate()

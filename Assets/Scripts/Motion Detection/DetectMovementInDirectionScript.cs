@@ -44,8 +44,11 @@ public class DetectMovementInDirectionScript : MonoBehaviour
 
     public void OnActivate()
     {
-        startPoint = handModel.GetPalmPosition();
-        valid = true;
+        if (handModel != null)
+        {
+            startPoint = handModel.GetPalmPosition();
+            valid = true;
+        }
     }
 
     public void OnDeactivate()

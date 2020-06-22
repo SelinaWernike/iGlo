@@ -7,6 +7,7 @@ using System.IO;
 
 
 
+
 [Serializable]
 public class Response {
     public GlobalC Global;
@@ -41,7 +42,7 @@ public class Countries {
 }
 
 [Serializable]
-public class ShortFullResponse {
+public class RootObject {
     public ShortResponse[] results;
 }
 
@@ -66,10 +67,10 @@ public class COVID19_API : MonoBehaviour
     void Start()
     {
       
-        ShortResponse anfrage1 = AccurateDataRequest("portugal");
-        Debug.Log(anfrage1.Deaths);
-        ShortResponse anfrage2= AccurateDataRequest("portugal", "2020-03-21T13:13:30Z");
-        Debug.Log(anfrage2.Deaths);
+        RootObject anfrage1 = AccurateDataRequest("portugal");
+        Debug.Log(anfrage1.results[0].Deaths);
+        RootObject  anfrage2= AccurateDataRequest("portugal", "2020-03-21T13:13:30Z");
+        Debug.Log(anfrage2.results[0].Deaths);
 
         Response anfrage3 = dataRequest();
         Debug.Log(anfrage3.Date);
@@ -82,24 +83,27 @@ public class COVID19_API : MonoBehaviour
         
     }
 
-    public ShortResponse AccurateDataRequest(string location, string time) {
+    public RootObject  AccurateDataRequest(string location, string time) {
          string webURL = URL + "live/country/" + location +"/status/confirmed/date/" + time;
           Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        return JsonUtility.FromJson<ShortFullResponse>(reader.ReadToEnd()).results[0];
+        string res = reader.ReadToEnd();
+        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
     }
 
-   public ShortResponse AccurateDataRequest(string location) {
+   public RootObject  AccurateDataRequest(string location) {
        string webURL = URL + "live/country/" + location +"/status/confirmed";
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        return JsonUtility.FromJson<ShortFullResponse>(reader.ReadToEnd()).results[0];
+        string res = reader.ReadToEnd();
+        Debug.Log(res);
+        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
    } 
 
    public Response dataRequest() {

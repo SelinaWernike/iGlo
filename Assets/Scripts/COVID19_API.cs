@@ -60,19 +60,19 @@ public class ShortResponse {
 }
 
 
-public class COVID19_API : MonoBehaviour
+public class COVID19_API : MonoBehaviour, IDataAPI<Response,RootObject>
 {
     private const string URL = "https://api.covid19api.com/";
     // Start is called before the first frame update
     void Start()
     {
       
-        RootObject anfrage1 = AccurateDataRequest("portugal");
+        RootObject anfrage1 = specificRequest("portugal");
         Debug.Log(anfrage1.results[0].Deaths);
-        RootObject  anfrage2= AccurateDataRequest("portugal", "2020-03-21T13:13:30Z");
+        RootObject  anfrage2= specificRequest("portugal", "2020-03-21T13:13:30Z","2020-03-21T13:13:30Z" );
         Debug.Log(anfrage2.results[0].Deaths);
 
-        Response anfrage3 = dataRequest();
+        Response anfrage3 = simpleRequest();
         Debug.Log(anfrage3.Date);
         Debug.Log(anfrage3.Countries[1].NewRecovered);
     }
@@ -83,8 +83,8 @@ public class COVID19_API : MonoBehaviour
         
     }
 
-    public RootObject  AccurateDataRequest(string location, string time) {
-         string webURL = URL + "live/country/" + location +"/status/confirmed/date/" + time;
+    public RootObject specificRequest(string location,  string startDate, string endDate) {
+         string webURL = URL + "live/country/" + location +"/status/confirmed?from" + startDate + "&to=" + endDate;
           Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
@@ -94,7 +94,7 @@ public class COVID19_API : MonoBehaviour
         return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
     }
 
-   public RootObject  AccurateDataRequest(string location) {
+   public RootObject  specificRequest(string location) {
        string webURL = URL + "live/country/" + location +"/status/confirmed";
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
@@ -106,7 +106,7 @@ public class COVID19_API : MonoBehaviour
         return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
    } 
 
-   public Response dataRequest() {
+   public Response simpleRequest() {
        string webURL = URL + "summary";
        Debug.Log(webURL);
        WebRequest covidRequest = WebRequest.Create(webURL);

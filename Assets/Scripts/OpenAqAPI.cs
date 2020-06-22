@@ -20,17 +20,18 @@ public class Results {
 
 
 
-public class OpenAqAPI : MonoBehaviour
+public class OpenAqAPI : MonoBehaviour, IDataAPI<FullResponse,FullResponse>
 {
 
     private const string URL = "https://api.openaq.org/v1/measurements";
     // Start is called before the first frame update
     void Start()
     {
-        Results res1 = simpleRequest(52.47f, 13.22f, "o3");
-        Debug.Log(res1.value);
-        FullResponse res2 = timeRequest(52.47f, 13.22f, "o3","2020-01-01","2020-12-31" );
+        FullResponse res1 = specificRequest("IN");
+        Debug.Log(res1.results[1].value);
+        FullResponse res2 = specificRequest("AU","2020-01-01","2020-12-31" );
         Debug.Log(res2.results[1].value);
+        FullResponse res3 = simpleRequest();
     }
 
     // Update is called once per frame
@@ -39,17 +40,26 @@ public class OpenAqAPI : MonoBehaviour
         
     }
 
-public Results simpleRequest(float lat, float lon, string parameter) {
-    string url = URL + "?coordinates=" + lat.ToString("G", CultureInfo.InvariantCulture) + "," + lon.ToString("G", CultureInfo.InvariantCulture) + "&parameter=" + parameter;
+public FullResponse  specificRequest(string location) {
+    string url = URL + "?country=" + location + "&parameter=o3";
     Debug.Log(url);
     WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
         StreamReader reader = new StreamReader(response.GetResponseStream());
-        return JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()).results[0];
+        return JsonUtility.FromJson<FullResponse>(reader.ReadToEnd());
 }
 
-public  FullResponse timeRequest(float lat, float lon, string parameter, string startDate, string endDate) {
-    string url = URL + "?coordinates=" + lat.ToString("G", CultureInfo.InvariantCulture) + "," + lon.ToString("G", CultureInfo.InvariantCulture) + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=" + parameter;
+public  FullResponse specificRequest(string location, string startDate, string endDate) {
+    string url = URL + "?country=" + location + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=o3";
+    Debug.Log(url);
+        WebRequest request = WebRequest.Create(url);
+        WebResponse response = request.GetResponse();
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        return JsonUtility.FromJson<FullResponse>(reader.ReadToEnd());
+}
+
+public FullResponse simpleRequest() {
+    string url = URL + "?parameter=o3";
     Debug.Log(url);
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();

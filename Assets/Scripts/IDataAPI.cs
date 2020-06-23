@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDataAPI<T,V>
+public interface IDataAPI
 {
-    T simpleRequest();
-    V specificRequest(string location);
+    DataObject[] simpleRequest();
+    DataObject[] specificRequest(string location);
 
-    V specificRequest(string location, string startDate, string endDate);
+    DataObject[] specificRequest(string location, string startDate, string endDate);
 }

@@ -60,21 +60,22 @@ public class ShortResponse {
 }
 
 
-public class COVID19_API : MonoBehaviour, IDataAPI<Response,RootObject>
+public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string URL = "https://api.covid19api.com/";
+    private GeocodeAPI geocode;
     // Start is called before the first frame update
     void Start()
     {
-      
-        RootObject anfrage1 = specificRequest("portugal");
-        Debug.Log(anfrage1.results[0].Deaths);
-        RootObject  anfrage2= specificRequest("portugal", "2020-03-21T13:13:30Z","2020-03-21T13:13:30Z" );
-        Debug.Log(anfrage2.results[0].Deaths);
+        geocode = GetComponent<GeocodeAPI>();
+        DataObject[] anfrage1 = specificRequest("portugal");
+        Debug.Log(anfrage1[0].ToString());
 
-        Response anfrage3 = simpleRequest();
-        Debug.Log(anfrage3.Date);
-        Debug.Log(anfrage3.Countries[1].NewRecovered);
+        DataObject[]  anfrage2= specificRequest("portugal", "2020-03-21T13:13:30Z","2020-03-21T13:13:30Z" );
+        Debug.Log(anfrage2[0].ToString());
+
+        DataObject[] anfrage3 = simpleRequest();
+        Debug.Log(anfrage3[0].ToString());
     }
 
     // Update is called once per frame
@@ -83,7 +84,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI<Response,RootObject>
         
     }
 
-    public RootObject specificRequest(string location,  string startDate, string endDate) {
+    public DataObject[] specificRequest(string location,  string startDate, string endDate) {
          string webURL = URL + "live/country/" + location +"/status/confirmed?from" + startDate + "&to=" + endDate;
           Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
@@ -91,10 +92,10 @@ public class COVID19_API : MonoBehaviour, IDataAPI<Response,RootObject>
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
         string res = reader.ReadToEnd();
-        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
+        return toData(JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}"));
     }
 
-   public RootObject  specificRequest(string location) {
+   public DataObject[]  specificRequest(string location) {
        string webURL = URL + "live/country/" + location +"/status/confirmed";
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
@@ -103,16 +104,41 @@ public class COVID19_API : MonoBehaviour, IDataAPI<Response,RootObject>
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
         string res = reader.ReadToEnd();
         Debug.Log(res);
-        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
+        return toData(JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}"));
    } 
 
-   public Response simpleRequest() {
+   public DataObject[] simpleRequest() {
        string webURL = URL + "summary";
        Debug.Log(webURL);
        WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        return JsonUtility.FromJson<Response>(reader.ReadToEnd());
+        return toData(JsonUtility.FromJson<Response>(reader.ReadToEnd()));
+   }
+
+   private DataObject[] toData(RootObject response) {
+       DataObject[] obj = new DataObject[response.results.Length];
+        for(int i = 0; i < response.results.Length; i++) {
+            if(i == response.results.Length - 1) {
+            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon,response.results[i].Country, response.results[i].Confirmed, "person", true);
+        }
+        obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon,response.results[i].Country, response.results[i].Confirmed, "person", false );
+        }
+        return obj;
+           
+   }
+
+   private DataObject[] toData(Response response) {
+       DataObject[] obj = new DataObject[response.Countries.Length];
+       for(int i = 0; i < response.Countries.Length; i++) {
+            Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode.ToLower());
+            Debug.Log(res.geometry.lat + ", " + res.geometry.lng);
+            if(i == response.Countries.Length - 1) {
+            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng,response.Countries[i].Country, response.Countries[i].NewConfirmed, "person", true);
+        }
+        obj[i] = new DataObject(res.geometry.lat, res.geometry.lng,response.Countries[i].Country, response.Countries[i].NewConfirmed, "person", false );
+        }
+        return obj;
    }
 }

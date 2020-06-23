@@ -68,22 +68,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     void Start()
     {
         geocode = GetComponent<GeocodeAPI>();
-        DataObject[] anfrage1 = specificRequest("portugal");
-        Debug.Log(anfrage1[0].ToString());
-
-        DataObject[]  anfrage2= specificRequest("portugal", "2020-03-21T13:13:30Z","2020-03-21T13:13:30Z" );
-        Debug.Log(anfrage2[0].ToString());
-
-        DataObject[] anfrage3 = simpleRequest();
-        Debug.Log(anfrage3[0].ToString());
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public DataObject[] specificRequest(string location,  string startDate, string endDate) {
          string webURL = URL + "live/country/" + location +"/status/confirmed?from" + startDate + "&to=" + endDate;
           Debug.Log(webURL);
@@ -132,7 +117,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
    private DataObject[] toData(Response response) {
        DataObject[] obj = new DataObject[response.Countries.Length];
        for(int i = 0; i < response.Countries.Length; i++) {
-            Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode.ToLower());
+            Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode);
             Debug.Log(res.geometry.lat + ", " + res.geometry.lng);
             if(i == response.Countries.Length - 1) {
             obj[i] = new DataObject(res.geometry.lat, res.geometry.lng,response.Countries[i].Country, response.Countries[i].NewConfirmed, "person", true);

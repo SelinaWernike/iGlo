@@ -31,21 +31,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 {
 
     private const string URL = "https://api.openaq.org/v1/measurements";
-    // Start is called before the first frame update
-    void Start()
-    {
-        DataObject[] res1 = specificRequest("IN");
-        Debug.Log(res1[0].ToString());
-        DataObject[] res2 = specificRequest("AU","2020-01-01","2020-12-31" );
-        Debug.Log(res2[0].ToString());
-        DataObject[] res3 = simpleRequest();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
 public DataObject[]  specificRequest(string location) {
     string url = URL + "?country=" + location + "&parameter=o3";

@@ -16,6 +16,7 @@ public class DeleteBtnEvent : MonoBehaviour
 
         foreach(Transform child in addMenu.transform) {
             child.gameObject.SetActive(true);
+            child.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
     }
 }

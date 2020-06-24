@@ -5,6 +5,7 @@ using UnityEngine;
 public class AddMenuEvent : MonoBehaviour
 {
     public GameObject menu;
+  
     public void close() {
         menu.SetActive(false);
     }

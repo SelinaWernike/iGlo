@@ -64,11 +64,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string URL = "https://api.covid19api.com/";
     private GeocodeAPI geocode;
-    // Start is called before the first frame update
-    void Start()
-    {
-        geocode = GetComponent<GeocodeAPI>();
-    }
+   
     public DataObject[] specificRequest(string location,  string startDate, string endDate) {
          string webURL = URL + "live/country/" + location +"/status/confirmed?from" + startDate + "&to=" + endDate;
           Debug.Log(webURL);
@@ -115,6 +111,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
    }
 
    private DataObject[] toData(Response response) {
+        geocode = GetComponent<GeocodeAPI>();
        DataObject[] obj = new DataObject[response.Countries.Length];
        for(int i = 0; i < response.Countries.Length; i++) {
             Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode);

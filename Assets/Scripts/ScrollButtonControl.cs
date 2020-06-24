@@ -20,6 +20,7 @@ public class ScrollButtonControl : MonoBehaviour
         apiList.Add(button.GetComponent<IDataAPI>());
         btnList.Add(button);
         int i = 0;
+        GetComponent<ActivateVizualizer>().visualize(button.GetComponent<IDataAPI>().simpleRequest());
     }
 
     public List<GameObject> getBtnList() {

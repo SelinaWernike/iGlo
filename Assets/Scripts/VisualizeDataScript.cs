@@ -37,6 +37,7 @@ public class VisualizeDataScript : MonoBehaviour
     public void Visualize(float latitude, float longitude, float data, bool lastData)
     {
         values.Add(new Record(latitude, longitude, data));
+        Debug.Log("call: " + latitude + ", " + longitude);
         if (lastData)
         {
             float min = values.Min(v => v.data);

@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class TransformEarthScript : MonoBehaviour
+public class TransformEarthScript : MonoBehaviour, IScrollHandler, IDragHandler
 {
+    [SerializeField]
+    private float dragSensitivity;
+    [SerializeField]
+    private float scrollSensitivity;
     [SerializeField]
     private float maxScale;
     [SerializeField]
     private float minScale;
 
-    private void OnMouseDrag()
+    public void OnDrag(PointerEventData eventData)
     {
-        Rotate(Input.GetAxis("Mouse X") * 3, Input.GetAxis("Mouse Y") * 3);
+        Rotate(eventData.delta.x * dragSensitivity, eventData.delta.y * dragSensitivity);
     }
 
-    private void Update()
+    public void OnScroll(PointerEventData eventData)
     {
-        Scale(Input.mouseScrollDelta.y * 0.001f);
+        Scale(eventData.scrollDelta.y * scrollSensitivity);
     }
 
     public void Rotate(float xDifference, float yDifference)

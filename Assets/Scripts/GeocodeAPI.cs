@@ -42,25 +42,27 @@ public class GeocodeAPI : MonoBehaviour
     private const string CACHE_PATH = "./caches/geocode.cache";
 
     private static ResultCache cache;
+    private bool cacheCreated;
 
-    private void Awake()        
+    private void Awake()
     {
         if (cache == null)
         {
-            if (File.Exists(CACHE_PATH))
-            {
-                cache = JsonUtility.FromJson<ResultCache>(File.ReadAllText(CACHE_PATH));
-            }
-            else
-            {
-                cache = new ResultCache();
-            }
+            cache = File.Exists(CACHE_PATH) ? JsonUtility.FromJson<ResultCache>(File.ReadAllText(CACHE_PATH)) : new ResultCache();
+            cacheCreated = true;
+        }
+        else
+        {
+            cacheCreated = false;
         }
     }
 
     private void OnApplicationQuit()
     {
-        File.WriteAllText(CACHE_PATH, JsonUtility.ToJson(cache));
+        if (cacheCreated)
+        {
+            File.WriteAllText(CACHE_PATH, JsonUtility.ToJson(cache));
+        }
     }
 
     public Result Forward(string countryName, string countryCode)

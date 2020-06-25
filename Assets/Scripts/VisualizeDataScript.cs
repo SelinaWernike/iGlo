@@ -4,8 +4,9 @@ using System.Linq;
 
 public enum VisualizationMethod
 {
+    RADIUS,
     SATURATION,
-    RADIUS
+    COLORS
 }
 
 public class VisualizeDataScript : MonoBehaviour
@@ -13,13 +14,16 @@ public class VisualizeDataScript : MonoBehaviour
     private const int EARTH_RADIUS = 6378;
 
     [SerializeField]
+    private VisualizationMethod method;
+    [SerializeField]
     private int radius;
     [SerializeField]
     private int numCirclePoints;
     [SerializeField]
     private Color color;
     [SerializeField]
-    private VisualizationMethod method;
+    private Color endColor;
+
     private Texture2D texture;
     private Color[] original;
     private List<Record> values;
@@ -40,6 +44,14 @@ public class VisualizeDataScript : MonoBehaviour
     {
         texture.SetPixels(original);
         texture.Apply(true);
+        values.Clear();
+    }
+
+    public void SetVisualizationMethod(VisualizationMethod method)
+    {
+        this.method = method;
+        texture.SetPixels(original);
+        FinishVisualization();
     }
 
     public void Visualize(float latitude, float longitude, float data)
@@ -53,30 +65,31 @@ public class VisualizeDataScript : MonoBehaviour
         float max = values.Max(v => v.data);
         foreach (Record record in values)
         {
-            Visualize(record.latitude, record.longitude, record.data, min, max);
+            switch (method)
+            {
+                case VisualizationMethod.SATURATION:
+                    {
+                        float h, s, v;
+                        Color.RGBToHSV(color, out h, out s, out v);
+                        float newSaturation = Map(record.data, min, max, 0, 1);
+                        DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
+                        break;
+                    }
+                case VisualizationMethod.RADIUS:
+                    {
+                        float newRadius = Map(record.data, min, max, radius / 4, radius);
+                        DrawPoint(record.latitude, record.longitude, newRadius, color);
+                        break;
+                    }
+                case VisualizationMethod.COLORS:
+                    {
+                        float proportion = Map(record.data, min, max, 0, 1);
+                        DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(color, endColor, proportion));
+                        break;
+                    }
+            }
         }
-        values.Clear();
-    }
-
-    public void Visualize(float latitude, float longitude, float data, float min, float max)
-    {
-        switch (method)
-        {
-            case VisualizationMethod.SATURATION:
-                {
-                    float h, s, v;
-                    Color.RGBToHSV(color, out h, out s, out v);
-                    float newSaturation = Map(data, min, max, 0, 1);
-                    DrawPoint(latitude, longitude, radius, Color.HSVToRGB(h, newSaturation, v));
-                    break;
-                }
-            case VisualizationMethod.RADIUS:
-                {
-                    float newRadius = Map(data, min, max, radius / 4, radius);
-                    DrawPoint(latitude, longitude, newRadius, color);
-                    break;
-                }
-        }
+        texture.Apply(true);
     }
 
     private void DrawPoint(float latitude, float longitude, float radius, Color color)
@@ -108,7 +121,6 @@ public class VisualizeDataScript : MonoBehaviour
                 }
             }
         }
-        texture.Apply(true);
     }
 
     private bool PointInside(int x, int y, Vector2Int[] points)

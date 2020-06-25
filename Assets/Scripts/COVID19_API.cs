@@ -64,11 +64,15 @@ public class ShortResponse
     public string Date;
 }
 
-
 public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string URL = "https://api.covid19api.com/";
     private GeocodeAPI geocode;
+
+    private void Awake()
+    {
+        geocode = GetComponent<GeocodeAPI>();
+    }
 
     public DataObject[] specificRequest(string location, string startDate, string endDate)
     {
@@ -118,7 +122,6 @@ public class COVID19_API : MonoBehaviour, IDataAPI
 
     private DataObject[] toData(Response response)
     {
-        geocode = GetComponent<GeocodeAPI>();
         DataObject[] obj = new DataObject[response.Countries.Length];
         for (int i = 0; i < response.Countries.Length; i++)
         {

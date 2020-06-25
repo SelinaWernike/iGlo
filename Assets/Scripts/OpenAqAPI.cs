@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Net;
 using System.IO;
+using System.Globalization;
 
 [Serializable]
 public class FullResponse {
@@ -14,39 +15,60 @@ public class FullResponse {
 public class Results {
     public float value;
     public string unit;
+    public CoordinatesAQ coordinates;
     public string country;
 }
 
+[Serializable]
+public class CoordinatesAQ {
+    public float latitude;
+    public float longitude;
+}
 
 
-public class OpenAqAPI : MonoBehaviour
+
+public class OpenAqAPI : MonoBehaviour, IDataAPI
 {
 
     private const string URL = "https://api.openaq.org/v1/measurements";
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+   
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-public Results simpleRequest(float lat, float lon, string parameter) {
-    WebRequest request = WebRequest.Create(URL + "?coordinates=" + lat + "," + lon + "&parameter=" + parameter);
+public DataObject[]  specificRequest(string location) {
+    string url = URL + "?country=" + location + "&parameter=o3";
+    Debug.Log(url);
+    WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
         StreamReader reader = new StreamReader(response.GetResponseStream());
-        return JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()).results[0];
+        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
 }
 
-public Results simpleRequest(float lat, float lon, string parameter, string startDate, string endDate) {
-        WebRequest request = WebRequest.Create(URL + "?coordinates=" + lat + "," + lon + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=" + parameter);
+public  DataObject[] specificRequest(string location, string startDate, string endDate) {
+    string url = URL + "?country=" + location + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=o3";
+    Debug.Log(url);
+        WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
         StreamReader reader = new StreamReader(response.GetResponseStream());
-        return JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()).results[0];
+        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
+}
+
+public DataObject[] simpleRequest() {
+    string url = URL + "?parameter=o3";
+    Debug.Log(url);
+        WebRequest request = WebRequest.Create(url);
+        WebResponse response = request.GetResponse();
+        StreamReader reader = new StreamReader(response.GetResponseStream());
+        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
+}
+
+private DataObject[] toData(FullResponse response) {
+    DataObject[] obj = new DataObject[response.results.Length];
+    for(int i = 0; i < response.results.Length; i++) {
+        if(i == response.results.Length - 1) {
+            obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude,response.results[i].country, response.results[i].value, response.results[i].unit, true);
+        }
+        obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude,response.results[i].country, response.results[i].value, response.results[i].unit, false );
+    }
+    return obj;
 }
     
 }

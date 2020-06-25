@@ -60,41 +60,23 @@ public class ShortResponse {
 }
 
 
-public class COVID19_API : MonoBehaviour
+public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string URL = "https://api.covid19api.com/";
-    // Start is called before the first frame update
-    void Start()
-    {
-      
-        RootObject anfrage1 = AccurateDataRequest("portugal");
-        Debug.Log(anfrage1.results[0].Deaths);
-        RootObject  anfrage2= AccurateDataRequest("portugal", "2020-03-21T13:13:30Z");
-        Debug.Log(anfrage2.results[0].Deaths);
-
-        Response anfrage3 = dataRequest();
-        Debug.Log(anfrage3.Date);
-        Debug.Log(anfrage3.Countries[1].NewRecovered);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public RootObject  AccurateDataRequest(string location, string time) {
-         string webURL = URL + "live/country/" + location +"/status/confirmed/date/" + time;
+    private GeocodeAPI geocode;
+   
+    public DataObject[] specificRequest(string location,  string startDate, string endDate) {
+         string webURL = URL + "live/country/" + location +"/status/confirmed?from" + startDate + "&to=" + endDate;
           Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
         string res = reader.ReadToEnd();
-        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
+        return toData(JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}"));
     }
 
-   public RootObject  AccurateDataRequest(string location) {
+   public DataObject[]  specificRequest(string location) {
        string webURL = URL + "live/country/" + location +"/status/confirmed";
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
@@ -103,16 +85,42 @@ public class COVID19_API : MonoBehaviour
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
         string res = reader.ReadToEnd();
         Debug.Log(res);
-        return JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}");
+        return toData(JsonUtility.FromJson<RootObject >("{\"results\":" + res + "}"));
    } 
 
-   public Response dataRequest() {
+   public DataObject[] simpleRequest() {
        string webURL = URL + "summary";
        Debug.Log(webURL);
        WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout=10000;
         WebResponse Answer = covidRequest.GetResponse();
         StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        return JsonUtility.FromJson<Response>(reader.ReadToEnd());
+        return toData(JsonUtility.FromJson<Response>(reader.ReadToEnd()));
+   }
+
+   private DataObject[] toData(RootObject response) {
+       DataObject[] obj = new DataObject[response.results.Length];
+        for(int i = 0; i < response.results.Length; i++) {
+            if(i == response.results.Length - 1) {
+            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon,response.results[i].Country, response.results[i].Confirmed, "person", true);
+        }
+        obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon,response.results[i].Country, response.results[i].Confirmed, "person", false );
+        }
+        return obj;
+           
+   }
+
+   private DataObject[] toData(Response response) {
+        geocode = GetComponent<GeocodeAPI>();
+       DataObject[] obj = new DataObject[response.Countries.Length];
+       for(int i = 0; i < response.Countries.Length; i++) {
+            Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode);
+            Debug.Log(res.geometry.lat + ", " + res.geometry.lng);
+            if(i == response.Countries.Length - 1) {
+            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng,response.Countries[i].Country, response.Countries[i].NewConfirmed, "person", true);
+        }
+        obj[i] = new DataObject(res.geometry.lat, res.geometry.lng,response.Countries[i].Country, response.Countries[i].NewConfirmed, "person", false );
+        }
+        return obj;
    }
 }

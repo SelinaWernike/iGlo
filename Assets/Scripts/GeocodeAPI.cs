@@ -32,22 +32,47 @@ public class Geometry
     public float lng;
 }
 
+[Serializable]
+public class ResultCache : SerializableDictionary<String, Result> { }
+
 public class GeocodeAPI : MonoBehaviour
 {
     private const string FORWARD_URL = "https://api.opencagedata.com/geocode/v1/json?key={0}&q={1}&countrycode={2}&no_annotations=1&limit=1";
     private const string API_KEY = "01905856ecea4d39992467e82a283703";
-    private VisualizeDataScript visualizer;
+    private const string CACHE_PATH = "./caches/geocode.cache";
 
-    private void Start()
+    private static ResultCache cache;
+
+    private void Awake()        
     {
-        visualizer = GetComponent<VisualizeDataScript>();
+        if (cache == null)
+        {
+            if (File.Exists(CACHE_PATH))
+            {
+                cache = JsonUtility.FromJson<ResultCache>(File.ReadAllText(CACHE_PATH));
+            }
+            else
+            {
+                cache = new ResultCache();
+            }
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        File.WriteAllText(CACHE_PATH, JsonUtility.ToJson(cache));
     }
 
     public Result Forward(string countryName, string countryCode)
     {
-        WebRequest request = WebRequest.Create(String.Format(FORWARD_URL, API_KEY, countryName, countryCode));
-        WebResponse response = request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        return JsonUtility.FromJson<ForwardResponse>(reader.ReadToEnd()).results[0];
+        if (!cache.ContainsKey(countryCode))
+        {
+            WebRequest request = WebRequest.Create(String.Format(FORWARD_URL, API_KEY, countryName, countryCode));
+            WebResponse response = request.GetResponse();
+            StreamReader reader = new StreamReader(response.GetResponseStream());
+            Result result = JsonUtility.FromJson<ForwardResponse>(reader.ReadToEnd()).results[0];
+            cache.Add(countryCode, result);
+        }
+        return cache[countryCode];
     }
 }

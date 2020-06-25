@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 public class ScrollButtonControl : MonoBehaviour
 {
@@ -19,7 +17,6 @@ public class ScrollButtonControl : MonoBehaviour
         Destroy(button.GetComponent<ItemDragHandler>());
         apiList.Add(button.GetComponent<IDataAPI>());
         btnList.Add(button);
-        int i = 0;
         GetComponent<ActivateVizualizer>().visualize(button.GetComponent<IDataAPI>().simpleRequest());
     }
 

@@ -42,20 +42,20 @@ public class VisualizeDataScript : MonoBehaviour
         texture.Apply(true);
     }
 
-    public void Visualize(float latitude, float longitude, float data, bool lastData)
+    public void Visualize(float latitude, float longitude, float data)
     {
         values.Add(new Record(latitude, longitude, data));
-        Debug.Log("call: " + latitude + ", " + longitude);
-        if (lastData)
+    }
+
+    public void FinishVisualization()
+    {
+        float min = values.Min(v => v.data);
+        float max = values.Max(v => v.data);
+        foreach (Record record in values)
         {
-            float min = values.Min(v => v.data);
-            float max = values.Max(v => v.data);
-            foreach (Record record in values)
-            {
-                Visualize(record.latitude, record.longitude, record.data, min, max);
-            }
-            values.Clear();
+            Visualize(record.latitude, record.longitude, record.data, min, max);
         }
+        values.Clear();
     }
 
     public void Visualize(float latitude, float longitude, float data, float min, float max)

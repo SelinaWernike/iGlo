@@ -43,24 +43,6 @@ public class GeocodeAPI : MonoBehaviour
         visualizer = GetComponent<VisualizeDataScript>();
     }
 
-    private void Update()
-    {
-        // TODO: example code, has to be removed when done!
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            Result result = Forward("Deutschland", "de");
-            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 50, false);
-            result = Forward("Frankreich", "fr");
-            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 100, false);
-            result = Forward("Polen", "pl");
-            visualizer.Visualize(result.geometry.lat, result.geometry.lng, 0, true);
-        }
-        else if (Input.GetKeyDown(KeyCode.M))
-        {
-            visualizer.ClearDrawings();
-        }
-    }
-
     public Result Forward(string countryName, string countryCode)
     {
         WebRequest request = WebRequest.Create(String.Format(FORWARD_URL, API_KEY, countryName, countryCode));

@@ -3,7 +3,6 @@
     private float latitude;
     private float longitude;
     private string country;
-
     private float value;
     private string unit;
 

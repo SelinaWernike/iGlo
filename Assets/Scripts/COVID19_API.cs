@@ -74,9 +74,14 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         geocode = GetComponent<GeocodeAPI>();
     }
 
+    public string GetAPIName()
+    {
+        return "Covid-19";
+    }
+
     public DataObject[] specificRequest(string location, string startDate, string endDate)
     {
-        string webURL = URL + "live/country/" + location + "/status/confirmed?from" + startDate + "&to=" + endDate;
+        string webURL = URL + "live/country/" + location + "/status/confirmed?from=" + startDate + "&to=" + endDate;
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout = 10000;
@@ -115,7 +120,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
-            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Confirmed, "person");
+            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Confirmed, "infected");
         }
         return obj;
     }
@@ -127,7 +132,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         {
             Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode);
             Debug.Log(res.geometry.lat + ", " + res.geometry.lng);
-            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng, response.Countries[i].Country, response.Countries[i].NewConfirmed, "person");
+            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng, response.Countries[i].Country, response.Countries[i].NewConfirmed, "infected");
         }
         return obj;
     }

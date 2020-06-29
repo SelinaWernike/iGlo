@@ -199,6 +199,11 @@ public class WorldMenuBehaviour : MonoBehaviour {
         currentDate.text = getDate("start");
     }
 
+    public System.DateTime getCurrentDate()
+    {
+        return System.DateTime.Parse(getDate("start"));
+    }
+
     public string getDate(string defDate) {
 
         InputField dayInput;

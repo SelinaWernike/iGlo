@@ -195,8 +195,6 @@ public class WorldMenuBehaviour : MonoBehaviour {
         Text endDate = GameObject.Find("EndDate").GetComponent<Text>();
         endDate.text = getDate("end");
 
-        Text currentDate = GameObject.Find("CurrentDate").GetComponent<Text>();
-        currentDate.text = getDate("start");
     }
 
     public string getDate(string defDate) {

@@ -318,11 +318,11 @@ public class WorldMenuBehaviour : MonoBehaviour {
     }
 
     public void onApplyButtonClick() {
-        DateTime start = DateTime.Parse(getDate("start"), CultureInfo.CreateSpecificCulture("fr-FR"));
+        DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
         if(timeLapseIsOn) {
-        DateTime end = DateTime.Parse(getDate("end"), CultureInfo.CreateSpecificCulture("fr-FR"));
+        DateTime end = DateTime.Parse(getDate("end"));
         Debug.Log(end.ToString());
         TimeSpan span = end.Subtract(start);
         Debug.Log(span.Days);

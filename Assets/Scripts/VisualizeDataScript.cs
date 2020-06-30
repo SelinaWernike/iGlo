@@ -23,6 +23,8 @@ public class VisualizeDataScript : MonoBehaviour
     private Color color;
     [SerializeField]
     private Color endColor;
+    [SerializeField]
+    private AnimationCurve interpolation;
 
     private Texture2D texture;
     private Color[] original;
@@ -47,11 +49,40 @@ public class VisualizeDataScript : MonoBehaviour
         values.Clear();
     }
 
+    public void Redraw()
+    {
+        if (values.Count > 0)
+        {
+            texture.SetPixels(original);
+            FinishVisualization();
+        }
+    }
+
+    public void SetStartColor(Color color)
+    {
+        if (this.color != color)
+        {
+            this.color = color;
+            Redraw();
+        }
+    }
+
+    public void SetEndColor(Color color)
+    {
+        if (this.endColor != color)
+        {
+            this.endColor = color;
+            Redraw();
+        }
+    }
+
     public void SetVisualizationMethod(VisualizationMethod method)
     {
-        this.method = method;
-        texture.SetPixels(original);
-        FinishVisualization();
+        if (this.method != method)
+        {
+            this.method = method;
+            Redraw();
+        }
     }
 
     public void Visualize(float latitude, float longitude, float data)
@@ -71,19 +102,19 @@ public class VisualizeDataScript : MonoBehaviour
                     {
                         float h, s, v;
                         Color.RGBToHSV(color, out h, out s, out v);
-                        float newSaturation = Map(record.data, min, max, 0, 1);
+                        float newSaturation = Interpolate(record.data, min, max, 0, 1);
                         DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
                         break;
                     }
                 case VisualizationMethod.RADIUS:
                     {
-                        float newRadius = Map(record.data, min, max, radius / 4, radius);
+                        float newRadius = Interpolate(record.data, min, max, radius / 4, radius);
                         DrawPoint(record.latitude, record.longitude, newRadius, color);
                         break;
                     }
                 case VisualizationMethod.COLORS:
                     {
-                        float proportion = Map(record.data, min, max, 0, 1);
+                        float proportion = Interpolate(record.data, min, max, 0, 1);
                         DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(color, endColor, proportion));
                         break;
                     }
@@ -134,6 +165,13 @@ public class VisualizeDataScript : MonoBehaviour
             }
         }
         return result;
+    }
+
+    private float Interpolate(float value, float from1, float to1, float from2, float to2)
+    {
+        float percentage = (value - from1) / (to1 - from1);
+        percentage = interpolation.Evaluate(percentage);
+        return (to2 - from2) * percentage + from2;
     }
 
     private float Map(float value, float from1, float to1, float from2, float to2)

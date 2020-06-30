@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 349794702}
   - component: {fileID: 349794701}
   - component: {fileID: 349794707}
+  - component: {fileID: 5486271117425814268}
   m_Layer: 5
   m_Name: OzonBtn
   m_TagString: Untagged
@@ -38,9 +39,9 @@ RectTransform:
   m_Father: {fileID: 3536166973378267230}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -27.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &349794706
@@ -171,6 +172,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7ecacc00c3c5646bb0a0cb483c10c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5486271117425814268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349794699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7612c6fdb17e44d9f4c7bc7562c9d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuInfo: {fileID: 0}
 --- !u!1 &612216682
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,9 +358,10 @@ GameObject:
   - component: {fileID: 544637094}
   - component: {fileID: 544637099}
   - component: {fileID: 544637100}
+  - component: {fileID: 4072438725637472605}
   m_Layer: 5
   m_Name: COVIDBtn
-  m_TagString: Untagged
+  m_TagString: API
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -366,9 +381,9 @@ RectTransform:
   m_Father: {fileID: 3536166973378267230}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -7.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4480844223909437531
@@ -511,6 +526,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f31581a7db7b5640b8b02980a732747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4072438725637472605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6085071386531649212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7612c6fdb17e44d9f4c7bc7562c9d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuInfo: {fileID: 0}
 --- !u!1001 &810933366878663379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -522,6 +550,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4202982950439340452, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
+        type: 3}
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4202982950439340453, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
@@ -566,22 +599,22 @@ PrefabInstance:
     - target: {fileID: 4202982951010335373, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 160
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4202982951010335373, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4202982951654424993, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4202982951654424993, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4202982951708661552, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
@@ -706,7 +739,7 @@ PrefabInstance:
     - target: {fileID: 4202982951708661555, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}
       propertyPath: m_Name
-      value: ScrollButton
+      value: ScrollButton Variant 1
       objectReference: {fileID: 0}
     - target: {fileID: 4202982951708661558, guid: 2ed5ffd49e9e0fa4abb2bc1e6be11b47,
         type: 3}

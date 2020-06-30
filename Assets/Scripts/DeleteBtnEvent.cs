@@ -5,6 +5,8 @@ using UnityEngine.UI;
 public class DeleteBtnEvent : MonoBehaviour
 {
     public GameObject dataMenu;
+    public GameObject infoMenu;
+    
     public GameObject addMenu;
     public GameObject earth;
   
@@ -24,7 +26,7 @@ public class DeleteBtnEvent : MonoBehaviour
     }
 
     
-   public void onValueChange(float value) {
-        GetComponent<Text>().text = "Tag" + value;
+    public void closeBtnClick() {
+        infoMenu.SetActive(false);
     }
 }

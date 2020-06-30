@@ -14,6 +14,7 @@ public class ScrollButtonControl : MonoBehaviour
         GameObject button = Instantiate(btn) as GameObject;
         button.SetActive(true);
         button.transform.SetParent(parent.transform,false);
+        button.GetComponent<CanvasGroup>().blocksRaycasts = true;
         Destroy(button.GetComponent<ItemDragHandler>());
         apiList.Add(button.GetComponent<IDataAPI>());
         btnList.Add(button);

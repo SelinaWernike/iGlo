@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
+using System.Globalization;
 
 public class WorldMenuBehaviour : MonoBehaviour {
     public GameObject worldMenu;
@@ -16,6 +18,8 @@ public class WorldMenuBehaviour : MonoBehaviour {
     public GameObject timeLapseSlider;
 
     public GameObject globe2Button;
+    public GameObject apiController;
+
 
     void Start() {
 
@@ -305,6 +309,28 @@ public class WorldMenuBehaviour : MonoBehaviour {
                 number = Mathf.Clamp(number, 1, 2);
                 globeCountInput.text = number.ToString();
                 break;
+        }
+    }
+
+    public void onApplyButtonClick() {
+        DateTime start = DateTime.Parse(getDate("start"), CultureInfo.CreateSpecificCulture("fr-FR"));
+        Debug.Log(start.ToString());
+        List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
+        if(timeLapseIsOn) {
+        DateTime end = DateTime.Parse(getDate("end"), CultureInfo.CreateSpecificCulture("fr-FR"));
+        Debug.Log(end.ToString());
+        TimeSpan span = end.Subtract(start);
+        Debug.Log(span.Days);
+        timeLapseSlider.GetComponent<Slider>().maxValue = span.Days;
+        foreach (IDataAPI api in dataList)
+        {
+            Debug.Log("Api Aufruf mit:" + start.ToString("yyyy-MM-dd") + end.ToString("yyyy-MM-dd"));
+        }
+        } else {
+            foreach (IDataAPI api in dataList)
+        {
+            Debug.Log("Api Aufruf mit:" + start.ToString("yyyy-MM-dd") + start.ToString("yyyy-MM-dd"));
+        }
         }
     }
 }

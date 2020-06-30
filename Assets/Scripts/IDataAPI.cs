@@ -8,4 +8,7 @@ public interface IDataAPI
     DataObject[] specificRequest(string location);
 
     DataObject[] specificRequest(string location, string startDate, string endDate);
+
+    string getName();
+    string getDescription();
 }

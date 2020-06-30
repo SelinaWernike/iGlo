@@ -35,7 +35,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 
     public DataObject[] specificRequest(string location)
     {
-        string url = URL + "?country=" + location + "&parameter=o3";
+        string url = URL + "?country=" + location + "&parameter=o3&limit=250";
         Debug.Log(url);
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
@@ -45,7 +45,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 
     public DataObject[] specificRequest(string location, string startDate, string endDate)
     {
-        string url = URL + "?country=" + location + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=o3";
+        string url = URL + "?country=" + location + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=o3&limit=250";
         Debug.Log(url);
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
@@ -53,9 +53,18 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
     }
 
+     public string getName() {
+        return null;
+    }
+
+    public string getDescription() {
+        return null;
+    }
+
+
     public DataObject[] simpleRequest()
     {
-        string url = URL + "?parameter=o3";
+        string url = URL + "?parameter=o3&limit=250";
         Debug.Log(url);
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();

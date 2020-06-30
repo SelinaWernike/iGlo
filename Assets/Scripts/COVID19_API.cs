@@ -111,6 +111,14 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return toData(JsonUtility.FromJson<Response>(reader.ReadToEnd()));
     }
 
+    public string getName() {
+        return null;
+    }
+
+    public string getDescription() {
+    return null;
+    }
+
     private DataObject[] toData(RootObject response)
     {
         DataObject[] obj = new DataObject[response.results.Length];

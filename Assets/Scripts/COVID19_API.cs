@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 using System.Net;
 using System.IO;
-
+using Unity.Jobs;
+using Unity.Collections;
 
 
 
@@ -115,6 +116,14 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return toData(JsonUtility.FromJson<Response>(reader.ReadToEnd()));
     }
 
+    public string getName() {
+        return null;
+    }
+
+    public string getDescription() {
+    return null;
+    }
+
     private DataObject[] toData(RootObject response)
     {
         DataObject[] obj = new DataObject[response.results.Length];
@@ -137,3 +146,28 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return obj;
     }
 }
+/*
+public struct ForwardJobParallel : IJobParallelFor
+{
+    
+    [WriteOnly]
+    public NativeArray<float> lat;
+
+    [WriteOnly]
+    public NativeArray<float> lng;
+    [ReadOnly]
+    public NativeArray<char[]> countries;
+
+    [ReadOnly]
+    public NativeArray<char[]> countryCode;
+
+    [ReadOnly]
+    public NativeArray<GeocodeAPI> api;
+    // Start is called before the first frame update
+    
+    public void Execute(int index) {
+         Result res = geocode.Forward(countries[index].Country, countries[index].CountryCode);
+            Debug.Log(res.geometry.lat + ", " + res.geometry.lng);
+            data[i] = new DataObject(res.geometry.lat, res.geometry.lng, countries[index].Country, countries[index].NewConfirmed, "person");
+    } 
+} */

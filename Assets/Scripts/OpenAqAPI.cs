@@ -32,6 +32,21 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 {
 
     private const string URL = "https://api.openaq.org/v1/measurements";
+    private static readonly string[] locations = {
+
+    "AD0944A","US Diplomatic Post: Dubai","AT4S235"
+    ,"Memorial Park", "Lukavac", "BG0057A","Goose Bay", "Kensington Park"
+    , "CH0044A", "Puchuncaví","市城管局"
+    ,"淄博市", "MED-MIRA - Tanque Miraflores", "CY0006A"
+    , "CZ0SMBO","DERP013", "DEBE010", "DK0054A"
+    , "EE0018A", "ES-92", "FI00208","FR04004", "Camden Kerbside"
+    , "GR0020A", "HU0037A","IE0111A", "Lodhi Road, Delhi - IMD"
+    , "IT1128A", "IT-1", "LT00002", "LU0101A", "LV0007A"
+    , "MK0035A", "MT00004", "Camarones", "Posterholt-Vlodropperweg"
+    ,"Sofienbergparken", "CAMPO DE MARTE", "Osieczów","PT01047"
+    ,"RO0155A","RS0033A", "SE0022A", "Residence for Dept. of Primary Industries and Mines"
+    ,"Los Angeles - N. Mai", "pm25", "US-624","Prishtine - IHMK"
+    };
 
     public string GetAPIName()
     {
@@ -50,12 +65,45 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 
     public DataObject[] specificRequest(string location, string startDate, string endDate)
     {
-        string url = URL + "?country=" + location + "&date_from=" + startDate + "&date_to=" + endDate + "&parameter=o3&limit=250";
+        string  url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250", URL, location,startDate,endDate);
         Debug.Log(url);
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
         StreamReader reader = new StreamReader(response.GetResponseStream());
         return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
+    }
+
+
+
+    public DataObject[] simpleRequest()
+    {
+        DateTime now = DateTime.Now;
+        DataObject[] result = {};
+        foreach (string location in locations)
+        {
+            string request = "location="  + location;
+            DataObject[] partResult = specificRequest(request, now.ToString("yyyy-MM-dd"), now.ToString("yyyy-MM-dd"));
+            int resultLength = result.Length;
+            if(resultLength == 0) {
+                result = partResult;
+                continue;
+            }
+            if(partResult.Length == 0) {
+                continue;
+            }
+            Array.Resize<DataObject>(ref result, resultLength + partResult.Length);
+            Array.Copy(partResult,0,result,resultLength,partResult.Length);
+        }
+        return result;
+    }
+
+    public DataObject[][] dateRequest(string startDate, string endDate) {
+        DataObject[][] result = new DataObject[locations.Length][];
+        for(int i = 0;i < locations.Length;i++) {
+            string request = "location="  + locations[i];
+            result[i] = specificRequest(request, startDate, endDate);
+        }
+        return result;
     }
 
      public string getName() {
@@ -65,18 +113,6 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     public string getDescription() {
         return null;
     }
-
-
-    public DataObject[] simpleRequest()
-    {
-        string url = URL + "?parameter=o3&limit=250";
-        Debug.Log(url);
-        WebRequest request = WebRequest.Create(url);
-        WebResponse response = request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
-    }
-
     private DataObject[] toData(FullResponse response)
     {
         DataObject[] obj = new DataObject[response.results.Length];

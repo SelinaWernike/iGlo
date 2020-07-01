@@ -71,11 +71,24 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     private const string DESCRIPTION = "https://api.covid19api.com/ \nAPI stellt alle Neuinfizierungen an einem Tag pro Land dar.";
 
     private const string URL = "https://api.covid19api.com/";
+    private const string CACHE_PATH = "./caches/geocode.cache";
     private GeocodeAPI geocode;
+     private static ResultCache cache;
+    private bool cacheCreated;
+
 
     private void Awake()
     {
         geocode = GetComponent<GeocodeAPI>();
+         if (cache == null)
+        {
+            cache = File.Exists(CACHE_PATH) ? JsonUtility.FromJson<ResultCache>(File.ReadAllText(CACHE_PATH)) : new ResultCache();
+            cacheCreated = true;
+        }
+        else
+        {
+            cacheCreated = false;
+        }
     }
 
     public string GetAPIName()
@@ -83,9 +96,9 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return "Covid-19";
     }
 
-    public DataObject[] specificRequest(string location, string startDate, string endDate)
+    public DataObject[] specificRequest( string location, string startDate, string endDate)
     {
-        string webURL = URL + "live/country/" + location + "/status/confirmed?from=" + startDate + "&to=" + endDate;
+        string webURL = URL + "live/country/" + location +  "/status/confirmed?from=" + startDate + "&to=" + endDate;
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout = 10000;
@@ -107,6 +120,19 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         Debug.Log(res);
         return toData(JsonUtility.FromJson<RootObject>("{\"results\":" + res + "}"));
     }
+
+    public DataObject[][] dateRequest(string startDate, string endDate) {
+        DataObject[][] result = new DataObject[cache.Count][];
+        int i = 0;
+        foreach (string countryCode in cache.Keys)
+        {
+            result[i] = specificRequest(countryCode,startDate,endDate);
+            i++;
+        }
+        return result;
+    }
+
+
 
     public DataObject[] simpleRequest()
     {

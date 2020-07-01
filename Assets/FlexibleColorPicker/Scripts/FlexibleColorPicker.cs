@@ -86,30 +86,6 @@ public class FlexibleColorPicker : MonoBehaviour
         UpdateMarkers();
     }
 
-    private void Update()
-    {
-        typeUpdate = false;
-        if (lastUpdatedMode != mode)
-            ChangeMode(mode);
-
-        if (staticMode && !pickerTexturesStandardized)
-        {
-            UpdateTextures(true);
-            pickerTexturesStandardized = true;
-        }
-        else if (!staticMode && pickerTexturesStandardized)
-        {
-            UpdateTextures(false);
-            pickerTexturesStandardized = false;
-        }
-
-        if (multiInstance && !materialsSeperated)
-        {
-            SeperateMaterials();
-            materialsSeperated = true;
-        }
-    }
-
     /// <summary>
     /// Change picker that is being focused (and edited) using the pointer.
     /// </summary>
@@ -490,6 +466,7 @@ public class FlexibleColorPicker : MonoBehaviour
         foreach (PickerType type in Enum.GetValues(typeof(PickerType)))
         {
             if (!skipPickers || IsPreviewType(type))
+
                 UpdateTexture(type, staticMode);
         }
     }

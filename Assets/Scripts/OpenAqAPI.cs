@@ -30,13 +30,7 @@ public class CoordinatesAQ
 
 public class OpenAqAPI : MonoBehaviour, IDataAPI
 {
-
     private const string URL = "https://api.openaq.org/v1/measurements";
-
-    public string GetAPIName()
-    {
-        return "Ozone";
-    }
 
     public DataObject[] specificRequest(string location)
     {

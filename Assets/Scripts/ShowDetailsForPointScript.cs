@@ -49,17 +49,17 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
             }
             else
             {
-                string info = "Latitude: " + latLon.x + "\n";
-                info += "Longitude: " + latLon.y + "\n";
-                info += "Country: " + result.components.country + " (" + result.components.country_code + ")\n";
+                string info = "Breite: " + latLon.x + "\n";
+                info += "Länge: " + latLon.y + "\n";
+                info += "Land: " + result.components.country + " (" + result.components.country_code + ")\n";
                 foreach (IDataAPI api in apiList)
                 {
-                    info += api.GetAPIName() + ": ";
+                    info += api.getName() + ": ";
                     DataObject[] dataObjects = api.specificRequest(result.components.country, date + "T00:00:00Z", date + "T23:59:59Z");
-                    info += dataObjects.Length == 0 ? "No data available!\n" : dataObjects[0].getValue() + " " + dataObjects[0].getUnit() + "\n";
+                    info += dataObjects.Length == 0 ? "Keine Daten verfügbar!\n" : dataObjects[0].getValue() + " " + dataObjects[0].getUnit() + "\n";
                 }
-                details.GetComponent<Text>().text = info;
-                details.GetComponent<RectTransform>().position = eventData.pressPosition;
+                Text text = details.GetComponentInChildren<Text>();
+                text.text = info;
                 details.SetActive(true);
             }
         }

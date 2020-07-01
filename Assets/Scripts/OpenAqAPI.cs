@@ -31,6 +31,8 @@ public class CoordinatesAQ
 public class OpenAqAPI : MonoBehaviour, IDataAPI
 {
 
+    const string NAME = "Ozon Werte";
+    const string DESCRIPTION = URL + "\nOzin Werte angegeben in ug/m^3";
     private const string URL = "https://api.openaq.org/v1/measurements";
     private static readonly string[] locations = {
 
@@ -47,6 +49,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     ,"RO0155A","RS0033A", "SE0022A", "Residence for Dept. of Primary Industries and Mines"
     ,"Los Angeles - N. Mai", "pm25", "US-624","Prishtine - IHMK"
     };
+
 
     public string GetAPIName()
     {
@@ -107,11 +110,11 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     }
 
      public string getName() {
-        return null;
+        return NAME;
     }
 
     public string getDescription() {
-        return null;
+        return DESCRIPTION;
     }
     private DataObject[] toData(FullResponse response)
     {

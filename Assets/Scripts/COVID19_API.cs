@@ -80,7 +80,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
 
     public DataObject[] specificRequest(string location, string startDate, string endDate)
     {
-        string webURL = URL + "live/country/" + location + "/status/confirmed?from=" + startDate + "&to=" + endDate;
+        string webURL = URL + "live/country/" + location +  "/status/confirmed?from=" + startDate + "&to=" + endDate;
         Debug.Log(webURL);
         WebRequest covidRequest = WebRequest.Create(webURL);
         covidRequest.Timeout = 10000;
@@ -103,6 +103,19 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return toData(JsonUtility.FromJson<RootObject>("{\"results\":" + res + "}"));
     }
 
+    public DataObject[][] dateRequest(string startDate, string endDate) {
+        DataObject[][] result = new DataObject[GeocodeAPI.cache.Count][];
+        int i = 0;
+        foreach (string countryCode in GeocodeAPI.cache.Keys)
+        {
+            result[i] = specificRequest(countryCode,startDate,endDate);
+            i++;
+        }
+        return result;
+    }
+
+
+
     public DataObject[] simpleRequest()
     {
         string webURL = URL + "summary";
@@ -119,7 +132,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     }
 
     public string getDescription() {
-    return DESCRIPTION;
+        return DESCRIPTION;
     }
 
     private DataObject[] toData(RootObject response)

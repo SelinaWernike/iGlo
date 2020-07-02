@@ -63,7 +63,7 @@ public class GeocodeAPI : MonoBehaviour
     private const string API_KEY = "01905856ecea4d39992467e82a283703";
     private const string CACHE_PATH = "./caches/geocode.cache";
 
-    private static ResultCache cache;
+    public static ResultCache cache;
     private bool cacheCreated;
 
     private void Awake()

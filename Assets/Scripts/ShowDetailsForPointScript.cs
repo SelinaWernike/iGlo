@@ -38,6 +38,7 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
     {
         if (valid)
         {
+            worldMenuBehaviour.SetSelectedEarth(gameObject);
             RaycastResult raycast = eventData.pointerPressRaycast;
             Vector3 localPoint = raycast.gameObject.transform.InverseTransformPoint(raycast.worldPosition);
             Vector2 latLon = ToLatLong(localPoint);
@@ -57,10 +58,13 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
                 foreach (IDataAPI api in apiList)
                 {
                     info += api.getName() + ": ";
-                    if(api.getName().Equals("Ozon Werte")) {
+                    if (api.getName().Equals("Ozon Werte"))
+                    {
                         location = "country=" + result.components.country_code.ToUpper();
-                        dataObjects = api.specificRequest(location, date , date );
-                    } else {
+                        dataObjects = api.specificRequest(location, date, date);
+                    }
+                    else
+                    {
                         location = result.components.country;
                         dataObjects = api.specificRequest(location, date + "T00:00:00Z", date + "T23:59:59Z");
                     }

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.Rendering;
 using System;
 
 public class WorldMenuBehaviour : MonoBehaviour
@@ -198,7 +197,7 @@ public class WorldMenuBehaviour : MonoBehaviour
         Texture copied = new Texture2D(texture.width, texture.height, TextureFormat.RGB24, texture.mipmapCount, true);
         Graphics.CopyTexture(texture, copied);
         earthClone.GetComponent<Renderer>().material.mainTexture = copied;
-        
+
         earth.transform.position = new Vector3(earthPos.x - 0.25f, earthPos.y, earthPos.z + 0.1f);
         earthClone.transform.position = new Vector3(earthPos.x + 0.25f, earthPos.y, earthPos.z + 0.1f);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
@@ -222,6 +221,16 @@ public class WorldMenuBehaviour : MonoBehaviour
         return selectedEarth;
     }
 
+    public void SetSelectedEarth(GameObject selected)
+    {
+        if (selectedEarth != selected)
+        {
+            selectedEarth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+            selected.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
+            selectedEarth = selected;
+        }
+    }
+
     public void onWorldButtonClick()
     {
         string worldButton = EventSystem.current.currentSelectedGameObject.name;
@@ -231,14 +240,10 @@ public class WorldMenuBehaviour : MonoBehaviour
             switch (worldButton)
             {
                 case "Globe1Button":
-                    selectedEarth = earth;
-                    earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
-                    world2.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+                    SetSelectedEarth(earth);
                     break;
                 case "Globe2Button":
-                    selectedEarth = world2;
-                    earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
-                    world2.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
+                    SetSelectedEarth(world2);
                     break;
             }
         }

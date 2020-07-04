@@ -26,6 +26,7 @@ public class VisualizeDataScript : MonoBehaviour
     {
         values = new Dictionary<string, Visualiuation>();
         texture = GetComponent<Renderer>().material.mainTexture as Texture2D;
+        Debug.Log(texture.GetHashCode() + ", " + gameObject.name);
         original = texture.GetPixels();
     }
 

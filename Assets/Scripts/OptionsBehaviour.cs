@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class OptionsBehaviour : MonoBehaviour
 {
     [SerializeField]
-    private GameObject earth;
+    private GameObject worldMenu;
     [SerializeField]
     private GameObject methodDropdown;
     [SerializeField]
@@ -21,10 +21,15 @@ public class OptionsBehaviour : MonoBehaviour
 
     private void Start()
     {
-        visualizer = earth.GetComponent<VisualizeDataScript>();
         startColorScript = startColorPicker.GetComponent<FlexibleColorPicker>();
         endColorScript = endColorPicker.GetComponent<FlexibleColorPicker>();
         methodDropdownScript = methodDropdown.GetComponent<Dropdown>();
+    }
+
+    private VisualizeDataScript GetVisualizer()
+    {
+        GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
+        return earth.GetComponent<VisualizeDataScript>();
     }
 
     public void OnApiButtonClick(ScrollButtonButton apiButton)
@@ -52,7 +57,7 @@ public class OptionsBehaviour : MonoBehaviour
                 obj.startColor = startColorScript.color;
             }
         }
-        visualizer.SetStartColor(currentKey, startColorScript.color);
+        GetVisualizer().SetStartColor(currentKey, startColorScript.color);
     }
 
     public void OnEndColorSubmit()
@@ -64,7 +69,7 @@ public class OptionsBehaviour : MonoBehaviour
                 obj.endColor = endColorScript.color;
             }
         }
-        visualizer.SetEndColor(currentKey, endColorScript.color);
+        GetVisualizer().SetEndColor(currentKey, endColorScript.color);
     }
 
     public void OnVisualizationSelection(int value)
@@ -90,6 +95,6 @@ public class OptionsBehaviour : MonoBehaviour
         {
             endColorPicker.SetActive(false);
         }
-        visualizer.SetVisualizationMethod(currentKey, method);
+        GetVisualizer().SetVisualizationMethod(currentKey, method);
     }
 }

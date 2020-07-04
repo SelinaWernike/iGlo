@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-
 public class DeleteBtnEvent : MonoBehaviour
 {
     public GameObject dataMenu;
     public GameObject infoMenu;
     
     public GameObject addMenu;
-    public GameObject earth;
+    public GameObject worldMenu;
   
     public void deleteAll()
     {
@@ -22,6 +20,7 @@ public class DeleteBtnEvent : MonoBehaviour
             child.gameObject.SetActive(true);
             child.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
+        GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
         earth.GetComponent<VisualizeDataScript>().ClearDrawings();
     }
 

@@ -66,7 +66,7 @@ public class GeocodeAPI : MonoBehaviour
     public static ResultCache cache;
     private bool cacheCreated;
 
-    private void Awake()
+    private void Start()
     {
         if (cache == null)
         {

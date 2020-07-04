@@ -18,9 +18,7 @@ public class CountryList {
 }
 public class CountryRequester : MonoBehaviour
 {
-    
-
-public GameObject earth;
+    public GameObject earth;
     private List<CountryObj> allCountries = new List<CountryObj>();
     private GeocodeAPI geocode;
 

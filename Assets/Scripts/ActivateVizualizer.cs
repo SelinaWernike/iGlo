@@ -1,18 +1,15 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ActivateVizualizer : MonoBehaviour
 {
-    public GameObject earth;
-    private VisualizeDataScript visualizer;
+    public GameObject worldMenu;
     private int counter = 0;
-    private void Start()
-    {
-        visualizer = earth.GetComponent<VisualizeDataScript>();
-    }
 
     public void visualize(string key, VisualizationMethod method, AnimationCurve curve, Color startColor, Color endColor, DataObject[] obj)
     {
+        counter = 0;
+        GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
+        VisualizeDataScript visualizer = earth.GetComponent<VisualizeDataScript>();
         visualizer.PrepareVisualization(key, method, curve, startColor, endColor);
         foreach (DataObject dataObj in obj)
         {

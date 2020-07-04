@@ -27,10 +27,10 @@ public class WorldMenuBehaviour : MonoBehaviour
 
     private Vector3 earthPos;
     private GameObject selectedEarth;
+    private List<ISelecionChangeObserver> observers = new List<ISelecionChangeObserver>();
 
     void Start()
     {
-
         endDateInput.SetActive(false);
         timeLapseSlider.SetActive(false);
 
@@ -43,8 +43,8 @@ public class WorldMenuBehaviour : MonoBehaviour
 
         earthPos = earth.transform.position;
 
-        selectedEarth = earth;
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+        SetSelectedEarthNoPass(earth);
 
         globeKey = "Globe1";
     }
@@ -202,6 +202,7 @@ public class WorldMenuBehaviour : MonoBehaviour
         earthClone.transform.position = new Vector3(earthPos.x + 0.25f, earthPos.y, earthPos.z + 0.1f);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
         earthClone.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+        SetSelectedEarthNoPass(earth);
     }
 
     public void RemoveWorld()
@@ -209,11 +210,15 @@ public class WorldMenuBehaviour : MonoBehaviour
         addWorldButton.SetActive(true);
         removeWorldButton.SetActive(false);
         globe2Button.SetActive(false);
-
-        selectedEarth = earth;
+        earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+        SetSelectedEarthNoPass(earth);
         Destroy(GameObject.Find("Earth(Clone)"));
         earth.transform.position = earthPos;
-        earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+    }
+
+    public void AddSelectionChangeObserver(ISelecionChangeObserver observer)
+    {
+        observers.Add(observer);
     }
 
     public GameObject GetSelectedEarth()
@@ -227,6 +232,18 @@ public class WorldMenuBehaviour : MonoBehaviour
         {
             selectedEarth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
             selected.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
+            SetSelectedEarthNoPass(selected);
+        }
+    }
+
+    public void SetSelectedEarthNoPass(GameObject selected)
+    {
+        if (selectedEarth != selected)
+        {
+            foreach (ISelecionChangeObserver observer in observers)
+            {
+                observer.onChange(selected);
+            }
             selectedEarth = selected;
         }
     }

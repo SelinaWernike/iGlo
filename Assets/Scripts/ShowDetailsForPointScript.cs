@@ -14,13 +14,11 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
 
     private bool valid;
     private GeocodeAPI geocode;
-    private List<IDataAPI> apiList;
     private WorldMenuBehaviour worldMenuBehaviour;
 
-    private void Awake()
+    private void Start()
     {
         geocode = GetComponent<GeocodeAPI>();
-        apiList = dataMenu.GetComponent<ScrollButtonControl>().getApiList();
         worldMenuBehaviour = worldMenu.GetComponent<WorldMenuBehaviour>();
     }
 
@@ -55,6 +53,8 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
                 info += "Land: " + result.components.country + " (" + result.components.country_code + ")\n";
                 string location;
                 DataObject[] dataObjects;
+
+                List<IDataAPI> apiList = dataMenu.GetComponent<ScrollButtonControl>().getApiList();
                 foreach (IDataAPI api in apiList)
                 {
                     info += api.getName() + ": ";

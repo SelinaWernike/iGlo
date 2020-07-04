@@ -4,10 +4,10 @@ public class DeleteBtnEvent : MonoBehaviour
 {
     public GameObject dataMenu;
     public GameObject infoMenu;
-    
+
     public GameObject addMenu;
     public GameObject worldMenu;
-  
+
     public void deleteAll()
     {
         List<GameObject> deleteList = dataMenu.GetComponent<ScrollButtonControl>().getBtnList();
@@ -24,8 +24,9 @@ public class DeleteBtnEvent : MonoBehaviour
         earth.GetComponent<VisualizeDataScript>().ClearDrawings();
     }
 
-    
-    public void closeBtnClick() {
+
+    public void closeBtnClick()
+    {
         infoMenu.SetActive(false);
     }
 }

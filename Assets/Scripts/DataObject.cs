@@ -15,6 +15,10 @@
         this.unit = unit;
     }
 
+    public DataObject () {
+        
+    }
+
     public float getLatitude()
     {
         return latitude;

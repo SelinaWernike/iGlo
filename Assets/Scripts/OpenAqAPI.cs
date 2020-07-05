@@ -33,7 +33,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI {
     const string NAME = "Ozon Werte";
     const string DESCRIPTION = URL + "\nOzin Werte angegeben in ug/m^3";
     private const string URL = "https://api.openaq.org/v1/measurements";
-    private static readonly string[] locations = {
+    public static readonly string[] locations = {
 
     "AD0944A","US Diplomatic Post: Dubai","AT4S235"
     ,"Memorial Park", "Lukavac", "BG0057A","Goose Bay", "Kensington Park"
@@ -97,9 +97,19 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI {
         DataObject[][] result = new DataObject[locations.Length][];
         for(int i = 0;i < locations.Length;i++) {
             string request = "location="  + locations[i];
-            result[i] = specificRequest(request, startDate, endDate);
+            DataObject[] requestAnswer = specificRequest(request, startDate, endDate);
+            if(requestAnswer.Length != 0) {
+            DataObject[] homogenArray = new DataObject[365];
+            Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
+            result[i] = homogenArray;
+            } 
         }
-        return result;
+       foreach(DataObject[] obj in result) {
+            if(obj != null) {
+                return result;
+            }
+        }
+        return null;
     }
 
      public string getName() {
@@ -118,5 +128,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI {
         }
         return obj;
     }
+
+    
 
 }

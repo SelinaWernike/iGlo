@@ -245,7 +245,13 @@ public class WorldMenuBehaviour : MonoBehaviour {
     }
 
     public System.DateTime getCurrentDate() {
+        if(timeLapseIsOn) {
+            DateTime startDate = DateTime.Parse(getDate("start"));
+            float days = timeLapseSlider.GetComponent<Slider>().value;
+            return startDate.AddDays(days);
+        } else {
         return System.DateTime.Parse(getDate("start"));
+        }
     }
 
     public string getDate(string inputFields) {
@@ -367,12 +373,11 @@ public class WorldMenuBehaviour : MonoBehaviour {
             TimeSpan span = end.Subtract(start);
             Debug.Log(span.Days);
             timeLapseSlider.GetComponent<Slider>().maxValue = span.Days;
-            foreach (IDataAPI api in dataList) {
-                Debug.Log("Api Aufruf mit:" + start.ToString("yyyy-MM-dd") + end.ToString("yyyy-MM-dd"));
-            }
+            apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
             foreach (IDataAPI api in dataList) {
                 Debug.Log("Api Aufruf mit:" + start.ToString("yyyy-MM-dd") + start.ToString("yyyy-MM-dd"));
+
             }
         }
     }

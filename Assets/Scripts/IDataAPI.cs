@@ -1,10 +1,11 @@
-﻿public interface IDataAPI
-{
-    DataObject[] simpleRequest();
-    DataObject[] specificRequest(string location);
-    DataObject[] specificRequest(string location, string startDate, string endDate);
-    DataObject[][] dateRequest(string startDate, string endDate);
+﻿using System.Threading.Tasks;
 
+public interface IDataAPI
+{
+    Task<DataObject[]> simpleRequest();
+    Task<DataObject[]> specificRequest(string location);
+    Task<DataObject[]> specificRequest(string location, string startDate, string endDate);
+    Task<DataObject[][]> dateRequest(string startDate, string endDate);
 
     string getName();
     string getDescription();

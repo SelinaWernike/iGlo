@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
 {
@@ -52,22 +53,15 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public void addButton(GameObject btn)
+    public async Task addButton(GameObject btn)
     {
-        GameObject button = Instantiate(btn) as GameObject;
-        button.SetActive(true);
-        button.transform.SetParent(parent.transform, false);
-        button.GetComponent<CanvasGroup>().blocksRaycasts = true;
-        button.GetComponent<ScrollButtonButton>().setDeletable(true);
-        Destroy(button.GetComponent<ItemDragHandler>());
-        getApiList().Add(button.GetComponent<IDataAPI>());
-        getBtnList().Add(button);
-        ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
+        ScrollButtonButton buttonScript = btn.GetComponent<ScrollButtonButton>();
+        IDataAPI dataAPI = btn.GetComponent<IDataAPI>();
         DateTime localDate = DateTime.Now;
         DateTime currentDate = GameObject.Find("WorldMenuManager").GetComponent<WorldMenuBehaviour>().getCurrentDate();
         if (DateTime.Equals(localDate.Date, currentDate.Date))
         {
-            DataObject[] data = button.GetComponent<IDataAPI>().simpleRequest();
+            DataObject[] data = await dataAPI.simpleRequest();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, data);
         }
         else
@@ -77,15 +71,23 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
             {
                 DateTime start = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("start"));
                 DateTime end = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("end"));
-                currentData = button.GetComponent<IDataAPI>().dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
+                currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
                 saveDataList.Add(currentData);
             }
             else
             {
-                currentData = button.GetComponent<IDataAPI>().dateRequest(currentDate.ToString("yyyy-MM-dd"), currentDate.ToString("yyyy-MM-dd"));
+                currentData = await dataAPI.dateRequest(currentDate.ToString("yyyy-MM-dd"), currentDate.ToString("yyyy-MM-dd"));
                 activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             }
         }
+        GameObject button = Instantiate(btn) as GameObject;
+        button.SetActive(true);
+        button.transform.SetParent(parent.transform, false);
+        button.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        button.GetComponent<ScrollButtonButton>().setDeletable(true);
+        Destroy(button.GetComponent<ItemDragHandler>());
+        getApiList().Add(button.GetComponent<IDataAPI>());
+        getBtnList().Add(button);
     }
 
     public void deleteAPI()
@@ -107,12 +109,12 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public void saveTimeSpanData(DateTime start, DateTime end)
+    public async Task saveTimeSpanData(DateTime start, DateTime end)
     {
         activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
-            DataObject[][] currentData = button.GetComponent<IDataAPI>().dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
+            DataObject[][] currentData = await button.GetComponent<IDataAPI>().dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
             saveDataList.Add(currentData);
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);

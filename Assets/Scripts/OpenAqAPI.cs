@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.IO;
 using System.Globalization;
+using System.Threading.Tasks;
 
 [Serializable]
 public class FullResponse
@@ -28,7 +29,8 @@ public class CoordinatesAQ
     public float longitude;
 }
 
-public class OpenAqAPI : MonoBehaviour, IDataAPI {
+public class OpenAqAPI : MonoBehaviour, IDataAPI
+{
 
     const string NAME = "Ozon Werte";
     const string DESCRIPTION = URL + "\nOzin Werte angegeben in ug/m^3";
@@ -49,74 +51,75 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI {
     ,"Los Angeles - N. Mai", "pm25", "US-624","Prishtine - IHMK"
     };
 
-    public DataObject[] specificRequest(string location)
+    public async Task<DataObject[]> specificRequest(string location)
     {
         string url = URL + "?country=" + location + "&parameter=o3&limit=250";
         Debug.Log(url);
-        WebRequest request = WebRequest.Create(url);
-        WebResponse response = request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
+        return toData(await Utility.RequestAsync<FullResponse>(url));
     }
 
-    public DataObject[] specificRequest(string location, string startDate, string endDate)
+    public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
-        string  url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250", URL, location,startDate,endDate);
+        string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250", URL, location, startDate, endDate);
         Debug.Log(url);
-        WebRequest request = WebRequest.Create(url);
-        WebResponse response = request.GetResponse();
-        StreamReader reader = new StreamReader(response.GetResponseStream());
-        return toData(JsonUtility.FromJson<FullResponse>(reader.ReadToEnd()));
+        return toData(await Utility.RequestAsync<FullResponse>(url));
     }
 
-
-
-    public DataObject[] simpleRequest()
+    public async Task<DataObject[]> simpleRequest()
     {
         DateTime now = DateTime.Now;
-        DataObject[] result = {};
+        DataObject[] result = { };
         foreach (string location in locations)
         {
-            string request = "location="  + location;
-            DataObject[] partResult = specificRequest(request, now.ToString("yyyy-MM-dd"), now.ToString("yyyy-MM-dd"));
+            string request = "location=" + location;
+            DataObject[] partResult = await specificRequest(request, now.ToString("yyyy-MM-dd"), now.ToString("yyyy-MM-dd"));
             int resultLength = result.Length;
-            if(resultLength == 0) {
+            if (resultLength == 0)
+            {
                 result = partResult;
                 continue;
             }
-            if(partResult.Length == 0) {
+            if (partResult.Length == 0)
+            {
                 continue;
             }
             Array.Resize<DataObject>(ref result, resultLength + partResult.Length);
-            Array.Copy(partResult,0,result,resultLength,partResult.Length);
+            Array.Copy(partResult, 0, result, resultLength, partResult.Length);
         }
         return result;
     }
 
-    public DataObject[][] dateRequest(string startDate, string endDate) {
+    public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
+    {
         DataObject[][] result = new DataObject[locations.Length][];
-        for(int i = 0;i < locations.Length;i++) {
-            string request = "location="  + locations[i];
-            DataObject[] requestAnswer = specificRequest(request, startDate, endDate);
-            if(requestAnswer.Length != 0) {
-            DataObject[] homogenArray = new DataObject[365];
-            Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
-            result[i] = homogenArray;
-            } 
+        for (int i = 0; i < locations.Length; i++)
+        {
+            string request = "location=" + locations[i];
+            DataObject[] requestAnswer = await specificRequest(request, startDate, endDate);
+            if (requestAnswer.Length != 0)
+            {
+                DataObject[] homogenArray = new DataObject[365];
+                Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
+                result[i] = homogenArray;
+            }
         }
-       foreach(DataObject[] obj in result) {
-            if(obj != null) {
+        foreach (DataObject[] obj in result)
+        {
+            if (obj != null)
+            {
                 return result;
             }
         }
         return null;
     }
 
-     public string getName() {
+    public string getName()
+    {
         return NAME;
     }
 
-    public string getDescription() {
+    public string getDescription()
+    {
         return DESCRIPTION;
     }
     private DataObject[] toData(FullResponse response)
@@ -129,6 +132,6 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI {
         return obj;
     }
 
-    
+
 
 }

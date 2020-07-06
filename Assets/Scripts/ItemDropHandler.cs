@@ -6,14 +6,13 @@ using UnityEngine.EventSystems;
 public class ItemDropHandler : MonoBehaviour, IDropHandler
 {
     private RectTransform dataMenu;
-    public void OnDrop(PointerEventData eventData) {
+    public async void OnDrop(PointerEventData eventData) {
         dataMenu = transform as RectTransform;
-        Debug.Log("Drop");
         if(RectTransformUtility.RectangleContainsScreenPoint(dataMenu, Input.mousePosition)) {
-            Debug.Log("Item Drop!");
             if(eventData.pointerDrag != null) {
-                GetComponent<ScrollButtonControl>().addButton(eventData.pointerDrag);
-                eventData.pointerDrag.SetActive(false);
+                GameObject target = eventData.pointerDrag;
+                await GetComponent<ScrollButtonControl>().addButton(eventData.pointerDrag);
+                target.SetActive(false);
             }
         }
     }

@@ -457,7 +457,7 @@ public class WorldMenuBehaviour : MonoBehaviour
         }
     }
 
-    public void onApplyButtonClick()
+    public async void onApplyButtonClick()
     {
         DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
@@ -469,7 +469,7 @@ public class WorldMenuBehaviour : MonoBehaviour
             TimeSpan span = end.Subtract(start);
             Debug.Log(span.Days);
             timeLapseSlider.GetComponent<Slider>().maxValue = span.Days;
-            apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
+            await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
             foreach (IDataAPI api in dataList) {
                 Debug.Log("Api Aufruf mit:" + start.ToString("yyyy-MM-dd") + start.ToString("yyyy-MM-dd"));

@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
-using System.Net;
-using System.IO;
-using Unity.Jobs;
-using Unity.Collections;
 
+using System.Threading.Tasks;
 
 
 [Serializable]
@@ -75,32 +70,21 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         geocode = GetComponent<GeocodeAPI>();
     }
 
-    public DataObject[] specificRequest(string location, string startDate, string endDate)
+    public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
-        string webURL = URL + "country/" + location +  "/status/confirmed/live?from=" + startDate + "T00:00:00Z" + "&to=" + endDate + "T12:00:00Z";
-        Debug.Log(webURL);
-        WebRequest covidRequest = WebRequest.Create(webURL);
-        covidRequest.Timeout = 10000;
-        WebResponse Answer = covidRequest.GetResponse();
-        StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        string res = reader.ReadToEnd();
-        return toData(JsonUtility.FromJson<RootObject>("{\"results\":" + res + "}"));
+        string webURL = URL + "country/" + location + "/status/confirmed/live?from=" + startDate + "T00:00:00Z" + "&to=" + endDate + "T23:59:59Z";
+        UnityEngine.Debug.Log(webURL);
+        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
 
-    public DataObject[] specificRequest(string location)
+    public async Task<DataObject[]> specificRequest(string location)
     {
         string webURL = URL + "live/country/" + location + "/status/confirmed";
-        Debug.Log(webURL);
-        WebRequest covidRequest = WebRequest.Create(webURL);
-        covidRequest.Timeout = 10000;
-        WebResponse Answer = covidRequest.GetResponse();
-        StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        string res = reader.ReadToEnd();
-        Debug.Log(res);
-        return toData(JsonUtility.FromJson<RootObject>("{\"results\":" + res + "}"));
+        UnityEngine.Debug.Log(webURL);
+        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
 
-    public DataObject[][] dateRequest(string startDate, string endDate) {
+    public async Task<DataObject[][]> dateRequest(string startDate, string endDate) {
         DataObject[][] result = new DataObject[100][];
         int i = 0;
         foreach (string countryCode in GeocodeAPI.cache.Keys)
@@ -108,7 +92,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
             if(i == 99) {
                 break;
             }
-            DataObject[] requestAnswer = specificRequest(countryCode, startDate, endDate);
+            DataObject[] requestAnswer = await specificRequest(countryCode, startDate, endDate);
             if(requestAnswer.Length != 0) {
             DataObject[] homogenArray = new DataObject[365];
             Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
@@ -124,22 +108,20 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return null;
     }
 
-    public DataObject[] simpleRequest()
+    public async Task<DataObject[]> simpleRequest()
     {
         string webURL = URL + "summary";
-        Debug.Log(webURL);
-        WebRequest covidRequest = WebRequest.Create(webURL);
-        covidRequest.Timeout = 10000;
-        WebResponse Answer = covidRequest.GetResponse();
-        StreamReader reader = new StreamReader(Answer.GetResponseStream());
-        return toData(JsonUtility.FromJson<Response>(reader.ReadToEnd()));
+        UnityEngine.Debug.Log(webURL);
+        return toData(await Utility.RequestAsync<Response>(webURL));
     }
 
-    public string getName() {
+    public string getName()
+    {
         return NAME;
     }
 
-    public string getDescription() {
+    public string getDescription()
+    {
         return DESCRIPTION;
     }
 

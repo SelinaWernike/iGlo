@@ -32,7 +32,7 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
         valid = true;
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public async void OnPointerUp(PointerEventData eventData)
     {
         if (valid)
         {
@@ -61,12 +61,12 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
                     if (api.getName().Equals("Ozon Werte"))
                     {
                         location = "country=" + result.components.country_code.ToUpper();
-                        dataObjects = api.specificRequest(location, date, date);
+                        dataObjects = await api.specificRequest(location, date, date);
                     }
                     else
                     {
                         location = result.components.country;
-                        dataObjects = api.specificRequest(location, date + "T00:00:00Z", date + "T23:59:59Z");
+                        dataObjects = await api.specificRequest(location, date + "T00:00:00Z", date + "T23:59:59Z");
                     }
                     float allCases = 0;
                     foreach (DataObject item in dataObjects)

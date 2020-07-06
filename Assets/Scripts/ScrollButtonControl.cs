@@ -88,6 +88,17 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
+    public void drawSingleDay(DateTime date) {
+        foreach (GameObject button in getBtnList())
+        {
+            activateVisualizer.deleteDrawings();
+            ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
+            DataObject[][] currentData = button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
+            activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
+            
+        }
+    }
+
     public void deleteAPI()
     {
         if (infoButton != null)
@@ -102,6 +113,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
                     child.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
                 }
             }
+            activateVisualizer.deleteVisual(infoButton.GetComponent<ScrollButtonButton>().key);
             Destroy(infoButton);
             infoButton = null;
         }

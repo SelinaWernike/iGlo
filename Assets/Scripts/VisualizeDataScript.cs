@@ -105,6 +105,19 @@ public class VisualizeDataScript : MonoBehaviour
         values[key].records.Add(new Record(latitude, longitude, data));
     }
 
+      public void ClearByKey(string key)
+    {
+         if (values.Count == 1)
+        {
+            ClearDrawings();
+        }
+        else
+        {
+            values.Remove(key);
+            Redraw();
+        }
+    }
+
     public void FinishVisualization()
     {
         foreach (Visualiuation visualiuation in values.Values)

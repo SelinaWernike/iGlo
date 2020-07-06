@@ -46,4 +46,10 @@ public class ActivateVizualizer : MonoBehaviour
         }
         visualizer.FinishVisualization();
     }
+
+    public void deleteVisual(string key) {
+         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
+        VisualizeDataScript visualizer = earth.GetComponent<VisualizeDataScript>();
+        visualizer.ClearByKey(key);
+    }
 }

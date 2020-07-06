@@ -31,6 +31,8 @@ public class WorldMenuBehaviour : MonoBehaviour
 
     void Start()
     {
+        setDateOnStartup();
+
         endDateInput.SetActive(false);
         timeLapseSlider.SetActive(false);
 
@@ -340,6 +342,27 @@ public class WorldMenuBehaviour : MonoBehaviour
         return date;
     }
 
+    public void setDateOnStartup() {
+        InputField dayInputStart = GameObject.Find("InputFieldDay").GetComponent<InputField>();
+        InputField monthInputStart = GameObject.Find("InputFieldMonth").GetComponent<InputField>();
+        InputField yearInputStart = GameObject.Find("InputFieldYear").GetComponent<InputField>();
+
+        InputField dayInputEnd = GameObject.Find("InputFieldDayEnd").GetComponent<InputField>();
+        InputField monthInputEnd = GameObject.Find("InputFieldMonthEnd").GetComponent<InputField>();
+        InputField yearInputEnd = GameObject.Find("InputFieldYearEnd").GetComponent<InputField>();
+
+        int[] currentDate = getSystemDate();
+
+        dayInputStart.text = currentDate[0].ToString();
+        dayInputEnd.text = currentDate[0].ToString();
+
+        monthInputStart.text = currentDate[1].ToString();
+        monthInputEnd.text = currentDate[1].ToString();
+
+        yearInputStart.text = currentDate[2].ToString();
+        yearInputEnd.text = currentDate[2].ToString();
+    }
+
     public int[] getSystemDate()
     {
         DateTime localDate = DateTime.Now;
@@ -386,7 +409,7 @@ public class WorldMenuBehaviour : MonoBehaviour
         InputField monthInput;
         InputField yearInput;
 
-        String inputFields;
+        string inputFields;
 
         switch (inputFieldType)
         {
@@ -474,6 +497,7 @@ public class WorldMenuBehaviour : MonoBehaviour
                 currentInput[2] = monthInput.text;
                 currentInput[3] = yearInput.text;
                 break;
+
             case "end":
                 dayInput = GameObject.Find("InputFieldDayEnd").GetComponent<InputField>();
                 monthInput = GameObject.Find("InputFieldMonthEnd").GetComponent<InputField>();

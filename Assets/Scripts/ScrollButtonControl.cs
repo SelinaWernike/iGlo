@@ -11,6 +11,8 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
     private GameObject addMenu;
     [SerializeField]
     private GameObject parent;
+    [SerializeField]
+    private GameObject loadingIcon;
 
     private string currentKey;
     private Dictionary<string, List<IDataAPI>> apiList = new Dictionary<string, List<IDataAPI>>();
@@ -55,6 +57,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
 
     public async Task addButton(GameObject btn)
     {
+        loadingIcon.SetActive(true);
         ScrollButtonButton buttonScript = btn.GetComponent<ScrollButtonButton>();
         IDataAPI dataAPI = btn.GetComponent<IDataAPI>();
         DateTime localDate = DateTime.Now;
@@ -88,6 +91,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         Destroy(button.GetComponent<ItemDragHandler>());
         getApiList().Add(button.GetComponent<IDataAPI>());
         getBtnList().Add(button);
+        loadingIcon.SetActive(false);
     }
 
     public void deleteAPI()

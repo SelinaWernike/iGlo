@@ -5,8 +5,7 @@ using UnityEngine.EventSystems;
 using System;
 using System.Linq;
 
-public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
-{
+public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
     public GameObject earth;
     public Toggle timeLapseToggle;
 
@@ -44,8 +43,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
     private List<ISelecionChangeObserver> observers = new List<ISelecionChangeObserver>();
     private Dictionary<string, List<string>> savedDates = new Dictionary<string, List<string>>();
 
-    void Start()
-    {
+    void Start() {
         AddSelectionChangeObserver(this);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
         SetSelectedEarthNoPass(earth);
@@ -64,28 +62,22 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         earthRot = earth.transform.rotation;
     }
 
-    void Update()
-    {
-        if (timeLapseIsOn)
-        {
+    void Update() {
+        if (timeLapseIsOn) {
             setTimeLapseDates();
+            checkTimeLapseDates();
         }
     }
 
-    public void IncreaseDay(string defIn)
-    {
+    public void IncreaseDay(string defIn) {
         InputField dayInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             dayInput = inputFieldDay.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             dayInput = inputFieldDayEnd.GetComponent<InputField>();
         }
         int day = int.Parse(dayInput.text);
-        if (checkButtonInput("day", day + 1))
-        {
+        if (checkButtonInput("day", day + 1)) {
             day += 1;
             day = clampDayByMonth(defIn, "button", day);
             dayInput.text = day.ToString();
@@ -93,20 +85,15 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         checkForDateError(defIn);
     }
 
-    public void ReduceDay(string defIn)
-    {
+    public void ReduceDay(string defIn) {
         InputField dayInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             dayInput = inputFieldDay.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             dayInput = inputFieldDayEnd.GetComponent<InputField>();
         }
         int day = int.Parse(dayInput.text);
-        if (checkButtonInput("day", day - 1))
-        {
+        if (checkButtonInput("day", day - 1)) {
             day -= 1;
             day = clampDayByMonth(defIn, "button", day);
             dayInput.text = day.ToString();
@@ -114,24 +101,19 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         checkForDateError(defIn);
     }
 
-    public void IncreaseMonth(string defIn)
-    {
+    public void IncreaseMonth(string defIn) {
         InputField monthInput;
         InputField dayInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             monthInput = inputFieldMonth.GetComponent<InputField>();
             dayInput = inputFieldDay.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             monthInput = inputFieldMonthEnd.GetComponent<InputField>();
             dayInput = inputFieldDayEnd.GetComponent<InputField>();
         }
         int day = int.Parse(dayInput.text);
         int month = int.Parse(monthInput.text);
-        if (checkButtonInput("month", month + 1))
-        {
+        if (checkButtonInput("month", month + 1)) {
             month += 1;
             monthInput.text = month.ToString();
 
@@ -141,73 +123,56 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         checkForDateError(defIn);
     }
 
-    public void ReduceMonth(string defIn)
-    {
+    public void ReduceMonth(string defIn) {
         InputField monthInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             monthInput = inputFieldMonth.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             monthInput = inputFieldMonthEnd.GetComponent<InputField>();
         }
         int month = int.Parse(monthInput.text);
-        if (checkButtonInput("month", month - 1))
-        {
+        if (checkButtonInput("month", month - 1)) {
             month -= 1;
             monthInput.text = month.ToString();
         }
         checkForDateError(defIn);
     }
 
-    public void IncreaseYear(string defIn)
-    {
+    public void IncreaseYear(string defIn) {
         InputField yearInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             yearInput = inputFieldYear.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             yearInput = inputFieldYearEnd.GetComponent<InputField>();
         }
         int year = int.Parse(yearInput.text);
-        if (checkButtonInput("year", year + 1))
-        {
+        if (checkButtonInput("year", year + 1)) {
             year += 1;
             yearInput.text = year.ToString();
         }
         checkForDateError(defIn);
     }
 
-    public void ReduceYear(string defIn)
-    {
+    public void ReduceYear(string defIn) {
         InputField yearInput;
-        if (defIn.Equals("start"))
-        {
+        if (defIn.Equals("start")) {
             yearInput = inputFieldYear.GetComponent<InputField>();
-        }
-        else
-        {
+        } else {
             yearInput = inputFieldYearEnd.GetComponent<InputField>();
         }
         int year = int.Parse(yearInput.text);
-        if (checkButtonInput("year", year - 1))
-        {
+        if (checkButtonInput("year", year - 1)) {
             year -= 1;
             yearInput.text = year.ToString();
         }
         checkForDateError(defIn);
     }
 
-    public void resetEarthRotation()
-    {
+    public void resetEarthRotation() {
         selectedEarth.transform.rotation = earthRot;
     }
 
-    public void AddWorld()
-    {
+    public void AddWorld() {
         addWorldButton.SetActive(false);
         removeWorldButton.SetActive(true);
         globe2Button.SetActive(true);
@@ -225,8 +190,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         SetSelectedEarthNoPass(earth);
     }
 
-    public void RemoveWorld()
-    {
+    public void RemoveWorld() {
         addWorldButton.SetActive(true);
         removeWorldButton.SetActive(false);
         globe2Button.SetActive(false);
@@ -236,45 +200,36 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         earth.transform.position = earthPos;
     }
 
-    public void AddSelectionChangeObserver(ISelecionChangeObserver observer)
-    {
+    public void AddSelectionChangeObserver(ISelecionChangeObserver observer) {
         observers.Add(observer);
     }
 
-    public GameObject GetSelectedEarth()
-    {
+    public GameObject GetSelectedEarth() {
         return selectedEarth;
     }
 
-    public void SetSelectedEarth(GameObject selected)
-    {
-        if (selectedEarth != selected)
-        {
+    public void SetSelectedEarth(GameObject selected) {
+        if (selectedEarth != selected) {
             selectedEarth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
             selected.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
             SetSelectedEarthNoPass(selected);
         }
     }
 
-    public void SetSelectedEarthNoPass(GameObject selected)
-    {
-        if (selectedEarth != selected)
-        {
-            foreach (ISelecionChangeObserver observer in observers)
-            {
+    public void SetSelectedEarthNoPass(GameObject selected) {
+        if (selectedEarth != selected) {
+            foreach (ISelecionChangeObserver observer in observers) {
                 observer.onChange(selectedEarth, selected);
             }
             selectedEarth = selected;
         }
     }
 
-    public void onWorldButtonClick()
-    {
+    public void onWorldButtonClick() {
         string worldButton = EventSystem.current.currentSelectedGameObject.name;
         GameObject earth2 = GameObject.Find("Earth(Clone)");
         {
-            switch (worldButton)
-            {
+            switch (worldButton) {
                 case "Globe1Button":
                     SetSelectedEarth(earth);
                     break;
@@ -285,10 +240,8 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public void addTimeLapse()
-    {
-        if (timeLapseToggle.isOn)
-        {
+    public void addTimeLapse() {
+        if (timeLapseToggle.isOn) {
             timeLapseIsOn = true;
 
             Text dateInputLabel = GameObject.Find("DateInputLabel").GetComponent<Text>();
@@ -300,8 +253,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
             setTimeLapseDates();
         }
 
-        if (!timeLapseToggle.isOn)
-        {
+        if (!timeLapseToggle.isOn) {
             timeLapseIsOn = false;
 
             Text dateInputLabel = GameObject.Find("DateInputLabel").GetComponent<Text>();
@@ -312,8 +264,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public void setTimeLapseDates()
-    {
+    public void setTimeLapseDates() {
         Text startDate = GameObject.Find("StartDate").GetComponent<Text>();
         startDate.text = getDate("start");
 
@@ -322,38 +273,30 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
 
     }
 
-    public System.DateTime getCurrentDate()
-    {
-        if (timeLapseIsOn)
-        {
+    public System.DateTime getCurrentDate() {
+        if (timeLapseIsOn) {
             DateTime startDate = DateTime.Parse(getDate("start"));
             float days = timeLapseSlider.GetComponent<Slider>().value;
             return startDate.AddDays(days);
-        }
-        else
-        {
+        } else {
             return System.DateTime.Parse(getDate("start"));
         }
     }
 
-    public string getDate(string inputFields)
-    {
+    public string getDate(string inputFields) {
 
         InputField dayInput;
         InputField monthInput;
         InputField yearInput;
         string date = "";
 
-        if (inputFields.Equals("start"))
-        {
+        if (inputFields.Equals("start")) {
             dayInput = inputFieldDay.GetComponent<InputField>();
             monthInput = inputFieldMonth.GetComponent<InputField>();
             yearInput = inputFieldYear.GetComponent<InputField>();
             date = (dayInput.text + "." + monthInput.text + "." + yearInput.text).ToString();
 
-        }
-        else if (inputFields.Equals("end"))
-        {
+        } else if (inputFields.Equals("end")) {
             dayInput = inputFieldDayEnd.GetComponent<InputField>();
             monthInput = inputFieldMonthEnd.GetComponent<InputField>();
             yearInput = inputFieldYearEnd.GetComponent<InputField>();
@@ -363,8 +306,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         return date;
     }
 
-    private void setDates(List<string> dates)
-    {
+    private void setDates(List<string> dates) {
         inputFieldDay.GetComponent<InputField>().text = dates[0];
         inputFieldMonth.GetComponent<InputField>().text = dates[1];
         inputFieldYear.GetComponent<InputField>().text = dates[2];
@@ -373,10 +315,8 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         inputFieldYearEnd.GetComponent<InputField>().text = dates[5 % dates.Count];
     }
 
-    public void onChange(GameObject previous, GameObject selected)
-    {
-        if (previous != null)
-        {
+    public void onChange(GameObject previous, GameObject selected) {
+        if (previous != null) {
             savedDates[previous.name].ReplaceOrAdd(0, inputFieldDay.GetComponent<InputField>().text);
             savedDates[previous.name].ReplaceOrAdd(1, inputFieldMonth.GetComponent<InputField>().text);
             savedDates[previous.name].ReplaceOrAdd(2, inputFieldYear.GetComponent<InputField>().text);
@@ -385,55 +325,43 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
             savedDates[previous.name].ReplaceOrAdd(5, inputFieldYearEnd.GetComponent<InputField>().text);
         }
         List<string> dates = savedDates.GetOrCreate(selected.name);
-        if (dates.Count == 0)
-        {
-            if (previous == null)
-            {
+        if (dates.Count == 0) {
+            if (previous == null) {
                 int[] currentDate = getSystemDate();
                 setDates(currentDate.Select(x => x.ToString()).ToList());
-            }
-            else
-            {
+            } else {
                 setDates(savedDates[previous.name]);
             }
-        }
-        else
-        {
+        } else {
             setDates(dates);
         }
     }
 
-    public int[] getSystemDate()
-    {
+    public int[] getSystemDate() {
         DateTime localDate = DateTime.Now;
         int[] currentDate = new int[] { localDate.Day, localDate.Month, localDate.Year };
 
         return currentDate;
     }
 
-    public bool checkButtonInput(string buttontype, int number)
-    {
+    public bool checkButtonInput(string buttontype, int number) {
         bool isValidNumber = false;
 
         int[] currentDate = getSystemDate();
 
-        switch (buttontype)
-        {
+        switch (buttontype) {
             case "day":
-                if (number > 0 && number <= 31)
-                {
+                if (number > 0 && number <= 31) {
                     isValidNumber = true;
                 }
                 break;
             case "month":
-                if (number > 0 && number <= 12)
-                {
+                if (number > 0 && number <= 12) {
                     isValidNumber = true;
                 }
                 break;
             case "year":
-                if (number > 2016 && number <= currentDate[2])
-                {
+                if (number > 2016 && number <= currentDate[2]) {
                     isValidNumber = true;
                 }
                 break;
@@ -441,8 +369,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         return isValidNumber;
     }
 
-    public void checkKeyboardInput(string inputFieldType)
-    {
+    public void checkKeyboardInput(string inputFieldType) {
         int number;
 
         InputField dayInput;
@@ -451,8 +378,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
 
         string inputFields;
 
-        switch (inputFieldType)
-        {
+        switch (inputFieldType) {
             case "day":
                 inputFields = "start";
                 dayInput = inputFieldDay.GetComponent<InputField>();
@@ -497,36 +423,34 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public async void onApplyButtonClick()
-    {
+<<<<<<< HEAD
+    public async void onApplyButtonClick() {
+=======
+    public async void onApplyButtonClick() {
+>>>>>>> remotes/origin/worldmenu
         DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
-        if (timeLapseIsOn)
-        {
+        if (timeLapseIsOn) {
             DateTime end = DateTime.Parse(getDate("end"));
             Debug.Log(end.ToString());
             TimeSpan span = end.Subtract(start);
             Debug.Log(span.Days);
             timeLapseSlider.GetComponent<Slider>().maxValue = span.Days;
             await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
-        }
-        else
-        {
+        } else {
             await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
         }
     }
 
-    public string[] getCurrentInput(string inputFields)
-    {
+    public string[] getCurrentInput(string inputFields) {
         string[] currentInput = new string[4];
 
         InputField dayInput;
         InputField monthInput;
         InputField yearInput;
 
-        switch (inputFields)
-        {
+        switch (inputFields) {
             case "start":
                 dayInput = inputFieldDay.GetComponent<InputField>();
                 monthInput = inputFieldMonth.GetComponent<InputField>();
@@ -553,9 +477,9 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         return currentInput;
     }
 
-    public void checkForDateError(string inputFields)
-    {
+    public void checkForDateError(string inputFields) {
         string[] currentInput = getCurrentInput(inputFields);
+
         int[] currentDate = getSystemDate();
 
         int inputDay = int.Parse(currentInput[1]);
@@ -568,19 +492,14 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
 
         DateTime earliest;
 
-        if (covIsActive)
-        {
+        if (covIsActive) {
             earliest = earliestCOV;
-        }
-        else
-        {
+        } else {
             earliest = earliestOZ;
         }
 
-        if (inputYear < earliest.Year && inputYear > currentYear || inputYear == earliest.Year && inputMonth < earliest.Month || inputYear == currentYear && inputMonth > currentMonth || inputYear == earliest.Year && inputMonth == earliest.Month && inputDay < earliest.Day || inputYear == currentYear && inputMonth == currentMonth && inputDay > currentDay)
-        {
-            switch (inputFields)
-            {
+        if (inputYear < earliest.Year && inputYear > currentYear || inputYear == earliest.Year && inputMonth < earliest.Month || inputYear == currentYear && inputMonth > currentMonth || inputYear == earliest.Year && inputMonth == earliest.Month && inputDay < earliest.Day || inputYear == currentYear && inputMonth == currentMonth && inputDay > currentDay) {
+            switch (inputFields) {
                 case "start":
                     startDateError.SetActive(true);
                     break;
@@ -588,11 +507,8 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
                     endDateError.SetActive(true);
                     break;
             }
-        }
-        else
-        {
-            switch (inputFields)
-            {
+        } else {
+            switch (inputFields) {
                 case "start":
                     startDateError.SetActive(false);
                     break;
@@ -603,8 +519,28 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
-    public int clampDayByMonth(string inputFields, string inputType, int inputNumber)
-    {
+    public void checkTimeLapseDates() {
+        string[] currentInputStart = getCurrentInput("start");
+        string[] currentInputEnd = getCurrentInput("end");
+
+        int inputDayStart = int.Parse(currentInputStart[1]);
+        int inputMonthStart = int.Parse(currentInputStart[2]);
+        int inputYearStart = int.Parse(currentInputStart[3]);
+
+        int inputDayEnd = int.Parse(currentInputEnd[1]);
+        int inputMonthEnd = int.Parse(currentInputEnd[2]);
+        int inputYearEnd = int.Parse(currentInputEnd[3]);
+
+        if (inputYearStart > inputYearEnd || inputYearStart == inputYearEnd && inputMonthStart > inputMonthEnd || inputYearStart == inputYearEnd && inputMonthStart == inputMonthEnd && inputDayStart > inputDayEnd) {
+            startDateError.SetActive(true);
+            endDateError.SetActive(true);
+        } else {
+            startDateError.SetActive(false);
+            endDateError.SetActive(false);
+        }
+    }
+
+    public int clampDayByMonth(string inputFields, string inputType, int inputNumber) {
         int minDay = 1;
         int maxDay = 31;
 
@@ -614,8 +550,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         int inputMonth = int.Parse(currentInput[2]);
         int inputYear = int.Parse(currentInput[3]);
 
-        switch (inputType)
-        {
+        switch (inputType) {
             case "button":
                 inputDay = inputNumber;
                 break;
@@ -624,15 +559,11 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
                 break;
         }
 
-        switch (inputMonth)
-        {
+        switch (inputMonth) {
             case 2:
-                if (inputYear == 2020)
-                {
+                if (inputYear == 2020) {
                     maxDay = 29;
-                }
-                else
-                {
+                } else {
                     maxDay = 28;
                 }
                 break;

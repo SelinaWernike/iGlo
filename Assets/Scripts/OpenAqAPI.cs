@@ -16,10 +16,17 @@ public class FullResponse
 [Serializable]
 public class Results
 {
+    public Date date;
     public float value;
     public string unit;
     public CoordinatesAQ coordinates;
     public string country;
+}
+
+[Serializable]
+public class Date 
+{
+    public string utc;
 }
 
 [Serializable]
@@ -60,7 +67,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
-        string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250", URL, location, startDate, endDate);
+        string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250&order_by=date", URL, location, startDate, endDate);
         Debug.Log(url);
         return toData(await Utility.RequestAsync<FullResponse>(url));
     }
@@ -127,7 +134,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
-            obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit);
+            obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, DateTime.Parse(response.results[i].date.utc));
         }
         return obj;
     }

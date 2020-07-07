@@ -94,12 +94,12 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         loadingIcon.SetActive(false);
     }
 
-    public void drawSingleDay(DateTime date) {
+    public async Task drawSingleDay(DateTime date) {
         foreach (GameObject button in getBtnList())
         {
             activateVisualizer.deleteDrawings();
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
-            DataObject[][] currentData = button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
+            DataObject[][] currentData = await button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             
         }

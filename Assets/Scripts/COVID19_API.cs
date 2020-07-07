@@ -130,7 +130,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
-            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen");
+            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", DateTime.Parse(response.results[i].Date));
         }
         return obj;
     }
@@ -141,7 +141,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         for (int i = 0; i < response.Countries.Length; i++)
         {
             Result res = geocode.Forward(response.Countries[i].Country, response.Countries[i].CountryCode);
-            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng, response.Countries[i].Country, response.Countries[i].TotalConfirmed, "Personen");
+            obj[i] = new DataObject(res.geometry.lat, res.geometry.lng, response.Countries[i].Country, response.Countries[i].TotalConfirmed, "Personen", DateTime.Parse(response.Date));
         }
         return obj;
     }

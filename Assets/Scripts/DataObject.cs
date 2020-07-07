@@ -1,18 +1,21 @@
-﻿public class DataObject
+﻿using System;
+public class DataObject
 {
     private float latitude;
     private float longitude;
     private string country;
     private float value;
     private string unit;
+    public DateTime date;
 
-    public DataObject(float lat, float log, string country, float value, string unit)
+    public DataObject(float lat, float log, string country, float value, string unit, DateTime date)
     {
         this.latitude = lat;
         this.longitude = log;
         this.country = country;
         this.value = value;
         this.unit = unit;
+        this.date = date;
     }
 
     public DataObject () {
@@ -44,8 +47,13 @@
         return unit;
     }
 
+    public DateTime getDate(){
+        return date;
+    }
+
     public override string ToString()
     {
         return "Koordinaten: " + latitude + ", " + longitude + " Land: " + country + " Werte: " + value + unit;
     }
+
 }

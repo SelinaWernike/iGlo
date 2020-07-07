@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 
 public class ActivateVizualizer : MonoBehaviour
 {
@@ -16,36 +15,17 @@ public class ActivateVizualizer : MonoBehaviour
     {
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
         VisualizeDataScript visualizer = earth.GetComponent<VisualizeDataScript>();
-        if (timeDatas != null)
+        if (timeDatas != null && timeDatas.Length != 0)
         {
-            if (timeDatas.Length != 0)
+            visualizer.PrepareVisualization(key, method, curve, startColor, endColor);
+            for (int i = 0; i < timeDatas.Length; i++)
             {
-
-                visualizer.PrepareVisualization(key, method, curve, startColor, endColor);
-                for (int i = 0; i < timeDatas.Length; i++)
+                if (timeDatas[i] != null && timeDatas[i].Length != 0)
                 {
-                    if (timeDatas[i] != null)
-                    {
-                        if (timeDatas[i].Length != 0)
-                        {
-
-                            if (timeDatas[i][index] != null)
-                            {
-                                int trueIndex = index;
-                                try
-                                {
-                                    trueIndex = checkDate(timeDatas, i, index);
-                                }
-                                catch (ArgumentNullException e)
-                                {
-                                    Debug.Log(e);
-                                    continue;
-                                }
-                                DataObject obj = timeDatas[i][trueIndex];
-                                Debug.Log(obj);
-                                visualizer.Visualize(key, obj.getLatitude(), obj.getLongitude(), obj.getValue());
-                            }
-                        }
+                    DataObject obj = timeDatas[i][index];
+                    if (obj != null)
+                    {                        
+                        visualizer.Visualize(key, obj.getLatitude(), obj.getLongitude(), obj.getValue());
                     }
                 }
             }
@@ -74,23 +54,5 @@ public class ActivateVizualizer : MonoBehaviour
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
         VisualizeDataScript visualizer = earth.GetComponent<VisualizeDataScript>();
         visualizer.ClearByKey(key);
-    }
-
-    /**
-        Compares the Current Date with the Date from the DataObject to map the correct value to the globe
-    **/
-    private int checkDate(DataObject[][] data, int index1, int index2)
-    {
-        if (data[index1][index2] == null || data[index1].Length < index2 + 1)
-        {
-            throw new ArgumentNullException("Datum nicht in Array");
-        }
-        Debug.Log(data[index1][index2].getDate() + " , " + worldMenu.GetComponent<WorldMenuBehaviour>().getCurrentDate());
-        if (DateTime.Equals(data[index1][index2].getDate().Date, worldMenu.GetComponent<WorldMenuBehaviour>().getCurrentDate().Date))
-        {
-            Debug.Log("true");
-            return index2;
-        }
-        return checkDate(data, index1, index2 + 1);
     }
 }

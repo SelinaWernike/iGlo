@@ -499,7 +499,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
 
     public async void onApplyButtonClick()
     {
-       DateTime start = DateTime.Parse(getDate("start"));
+        DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
         if (timeLapseIsOn)
@@ -514,7 +514,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver
         else
         {
             await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
-        } 
+        }
     }
 
     public string[] getCurrentInput(string inputFields)

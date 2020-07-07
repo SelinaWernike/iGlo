@@ -124,13 +124,8 @@ public class VisualizeDataScript : MonoBehaviour
         {
             foreach (Visualiuation visualiuation in values.Values)
             {
-                if (visualiuation.records != null)
+                if (visualiuation.records.Count != 0)
                 {
-                    if (visualiuation.records.Count != 0)
-                    {
-                        
-
-
                     float min = visualiuation.records.Min(v => v.data);
                     float max = visualiuation.records.Max(v => v.data);
                     foreach (Record record in visualiuation.records)
@@ -160,7 +155,6 @@ public class VisualizeDataScript : MonoBehaviour
                         }
                     }
                 }
-                    }
             }
             texture.Apply(true);
         }

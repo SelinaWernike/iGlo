@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
+
 using System.Threading.Tasks;
 
 
@@ -74,26 +74,38 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     {
         string webURL = URL + "country/" + location + "/status/confirmed/live?from=" + startDate + "&to=" + endDate;
         UnityEngine.Debug.Log(webURL);
-        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"), DateTime.Parse(startDate), DateTime.Parse(endDate));
+        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
 
-    public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
+    public async Task<DataObject[]> specificRequest(string location)
     {
+        string webURL = URL + "live/country/" + location + "/status/confirmed";
+        UnityEngine.Debug.Log(webURL);
+        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
+    }
+
+    public async Task<DataObject[][]> dateRequest(string startDate, string endDate) {
         DataObject[][] result = new DataObject[100][];
         int i = 0;
         foreach (string countryCode in GeocodeAPI.cache.Keys)
         {
-            if (i == 100)
-            {
+            if(i == 99) {
                 break;
             }
             DataObject[] requestAnswer = await specificRequest(countryCode, startDate, endDate);
-            result[i++] = requestAnswer;
+            if(requestAnswer.Length != 0) {
+                DataObject[] homogenArray = new DataObject[365];
+            if(requestAnswer.Length >= 365) {
+                Array.Copy(requestAnswer,0,homogenArray,0,365);
+            } else {
+                Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
+            }
+                result[i] = homogenArray;
+            }
+            i++;
         }
-        foreach (DataObject[] obj in result)
-        {
-            if (obj != null)
-            {
+        foreach(DataObject[] obj in result) {
+            if(obj != null) {
                 return result;
             }
         }
@@ -117,26 +129,14 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return DESCRIPTION;
     }
 
-    private DataObject[] toData(RootObject response, DateTime start, DateTime end)
+    private DataObject[] toData(RootObject response)
     {
-        int days = end.Subtract(start).Days + 1;
-        List<DataObject> obj = new List<DataObject>(days);
+        DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
-            // COVID-19 API sometimes gets confused and adds unwanted dates
-            DateTime current = DateTime.Parse(response.results[i].Date).Date;
-            if (current >= start && current <= end)
-            {
-                obj.Add(new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", current));
-            }
+            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", DateTime.Parse(response.results[i].Date));
         }
-        if (obj.Count > days)
-        {
-            int exceedAmount = obj.Count - days;
-            Debug.Log("Exceeded requested data size by " + exceedAmount);
-            obj.RemoveRange(days, exceedAmount);
-        }
-        return obj.ToArray();
+        return obj;
     }
 
     private DataObject[] toData(Response response)

@@ -51,22 +51,29 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
                 string info = "Breite: " + latLon.x + "\n";
                 info += "Länge: " + latLon.y + "\n";
                 info += "Land: " + result.components.country + " (" + result.components.country_code + ")\n";
-                List<IDataAPI> apiList = dataMenu.GetComponent<ScrollButtonControl>().getApiList();
+                string location;
                 DataObject[] dataObjects;
+
+                List<IDataAPI> apiList = dataMenu.GetComponent<ScrollButtonControl>().getApiList();
                 foreach (IDataAPI api in apiList)
                 {
                     info += api.getName() + ": ";
                     if (api.getName().Equals("Ozon Werte"))
                     {
-                        string location = "country=" + result.components.country_code.ToUpper();
+                        location = "country=" + result.components.country_code.ToUpper();
                         dataObjects = await api.specificRequest(location, date, date);
                     }
                     else
                     {
-                        string location = result.components.country;
+                        location = result.components.country;
                         dataObjects = await api.specificRequest(location, date, date);
                     }
-                    info += dataObjects.Length == 0 ? "Keine Daten verfügbar!\n" : dataObjects[0].getValue() + " " + dataObjects[0].getUnit() + "\n";
+                    float allCases = 0;
+                    foreach (DataObject item in dataObjects)
+                    {
+                        allCases += item.getValue();
+                    }
+                    info += dataObjects.Length == 0 ? "Keine Daten verfügbar!\n" : (decimal) allCases + " " + dataObjects[0].getUnit() + "\n";
                 }
                 Text text = details.GetComponentInChildren<Text>();
                 text.text = info;

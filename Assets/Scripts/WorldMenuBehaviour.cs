@@ -422,12 +422,8 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
                 break;
         }
     }
-
-<<<<<<< HEAD
-    public async void onApplyButtonClick() {
-=======
-    public async void onApplyButtonClick() {
->>>>>>> remotes/origin/worldmenu
+    public async void onApplyButtonClick()
+    {
         DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
@@ -440,7 +436,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
             await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
             await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
-        }
+        } 
     }
 
     public string[] getCurrentInput(string inputFields) {

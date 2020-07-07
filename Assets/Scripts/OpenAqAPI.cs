@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Net;
+using System.IO;
+using System.Globalization;
 using System.Threading.Tasks;
 
 [Serializable]
@@ -20,7 +24,7 @@ public class Results
 }
 
 [Serializable]
-public class Date
+public class Date 
 {
     public string utc;
 }
@@ -54,11 +58,18 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     ,"Los Angeles - N. Mai", "pm25", "US-624","Prishtine - IHMK"
     };
 
+    public async Task<DataObject[]> specificRequest(string location)
+    {
+        string url = URL + "?country=" + location + "&parameter=o3&limit=250";
+        Debug.Log(url);
+        return toData(await Utility.RequestAsync<FullResponse>(url));
+    }
+
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
         string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250&order_by=date", URL, location, startDate, endDate);
         Debug.Log(url);
-        return toData(await Utility.RequestAsync<FullResponse>(url), DateTime.Parse(startDate), DateTime.Parse(endDate));
+        return toData(await Utility.RequestAsync<FullResponse>(url));
     }
 
     public async Task<DataObject[]> simpleRequest()
@@ -92,7 +103,12 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         {
             string request = "location=" + locations[i];
             DataObject[] requestAnswer = await specificRequest(request, startDate, endDate);
-            result[i] = requestAnswer;
+            if (requestAnswer.Length != 0)
+            {
+                DataObject[] homogenArray = new DataObject[365];
+                Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
+                result[i] = homogenArray;
+            }
         }
         foreach (DataObject[] obj in result)
         {
@@ -113,26 +129,19 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     {
         return DESCRIPTION;
     }
-
-    private DataObject[] toData(FullResponse response, DateTime start, DateTime end)
+    private DataObject[] toData(FullResponse response)
     {
-        int days = end.Subtract(start).Days + 1;
-        List<DataObject> obj = new List<DataObject>(days);
+        DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
-            if (response.results[i].value < 0)
-            {
-                Debug.Log("Setting ozone value to 0 for " + response.results[i].country);
+            if(response.results[i].value < 0) {
                 response.results[i].value = 0;
             }
-            obj.Add(new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, DateTime.Parse(response.results[i].date.utc)));
+            obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, DateTime.Parse(response.results[i].date.utc));
         }
-        if (obj.Count > days)
-        {
-            int exceedAmount = obj.Count - days;
-            Debug.Log("Exceeded requested data size by " + exceedAmount);
-            obj.RemoveRange(days, exceedAmount);
-        }
-        return obj.ToArray();
+        return obj;
     }
+
+
+
 }

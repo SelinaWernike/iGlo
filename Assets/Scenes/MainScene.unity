@@ -158,6 +158,12 @@ MonoBehaviour:
   endDateInput: {fileID: 1546337953}
   timeLapseToggleObj: {fileID: 1903821254}
   timeLapseSlider: {fileID: 2046775461}
+  inputFieldDay: {fileID: 1215700951}
+  inputFieldMonth: {fileID: 627053954}
+  inputFieldYear: {fileID: 2008780792}
+  inputFieldDayEnd: {fileID: 60611667}
+  inputFieldMonthEnd: {fileID: 946137501}
+  inputFieldYearEnd: {fileID: 1440562046}
   globe2Button: {fileID: 103975869}
   apiController: {fileID: 993253482}
   addWorldButton: {fileID: 95379953}

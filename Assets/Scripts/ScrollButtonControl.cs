@@ -27,7 +27,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         activateVisualizer = GetComponent<ActivateVizualizer>();
     }
 
-    public void onChange(GameObject selected)
+    public void onChange(GameObject previous, GameObject selected)
     {
         if (currentKey != null && currentKey != selected.name)
         {

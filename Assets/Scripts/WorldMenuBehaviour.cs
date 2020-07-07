@@ -16,6 +16,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
     public GameObject endDateInput;
     public GameObject timeLapseToggleObj;
     public GameObject timeLapseSlider;
+    public GameObject closingScreen;
 
     public GameObject inputFieldDay;
     public GameObject inputFieldMonth;
@@ -48,6 +49,8 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
         SetSelectedEarthNoPass(earth);
 
+        closingScreen.SetActive(false);
+
         endDateInput.SetActive(false);
         timeLapseSlider.SetActive(false);
 
@@ -65,7 +68,6 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
     void Update() {
         if (timeLapseIsOn) {
             setTimeLapseDates();
-            checkTimeLapseDates();
         }
     }
 
@@ -422,8 +424,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
                 break;
         }
     }
-    public async void onApplyButtonClick()
-    {
+    public async void onApplyButtonClick() {
         DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
@@ -436,7 +437,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
             await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
             await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
-        } 
+        }
     }
 
     public string[] getCurrentInput(string inputFields) {
@@ -492,6 +493,10 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
             earliest = earliestCOV;
         } else {
             earliest = earliestOZ;
+        }
+
+        if (timeLapseIsOn) {
+            checkTimeLapseDates();
         }
 
         if (inputYear < earliest.Year && inputYear > currentYear || inputYear == earliest.Year && inputMonth < earliest.Month || inputYear == currentYear && inputMonth > currentMonth || inputYear == earliest.Year && inputMonth == earliest.Month && inputDay < earliest.Day || inputYear == currentYear && inputMonth == currentMonth && inputDay > currentDay) {
@@ -575,5 +580,20 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         int clampedDay = Mathf.Clamp(inputDay, minDay, maxDay);
 
         return clampedDay;
+    }
+    public void onCloseButtonClick() {
+        string buttonClicked = EventSystem.current.currentSelectedGameObject.name;
+        switch (buttonClicked) {
+            case "CloseButton":
+                closingScreen.SetActive(true);
+                break;
+            case "CloseProgrammButton":
+                Application.Quit();
+                Debug.Log("application is quitting...");
+                break;
+            case "AbortButton":
+                closingScreen.SetActive(false);
+                break;
+        }
     }
 }

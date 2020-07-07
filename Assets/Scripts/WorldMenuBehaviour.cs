@@ -471,7 +471,7 @@ public class WorldMenuBehaviour : MonoBehaviour
             timeLapseSlider.GetComponent<Slider>().maxValue = span.Days;
             await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
-          apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
+            await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
         }
     }
 

@@ -134,6 +134,9 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         DataObject[] obj = new DataObject[response.results.Length];
         for (int i = 0; i < response.results.Length; i++)
         {
+            if(response.results[i].value < 0) {
+                response.results[i].value = 0;
+            }
             obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, DateTime.Parse(response.results[i].date.utc));
         }
         return obj;

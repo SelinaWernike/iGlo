@@ -2,6 +2,7 @@
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
 {
@@ -13,6 +14,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
     private GameObject parent;
     [SerializeField]
     private GameObject loadingIcon;
+    public GameObject slider;
 
     private string currentKey;
     private Dictionary<string, List<IDataAPI>> apiList = new Dictionary<string, List<IDataAPI>>();
@@ -62,6 +64,14 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         IDataAPI dataAPI = btn.GetComponent<IDataAPI>();
         DateTime localDate = DateTime.Now;
         DateTime currentDate = GameObject.Find("WorldMenuManager").GetComponent<WorldMenuBehaviour>().getCurrentDate();
+        GameObject button = Instantiate(btn) as GameObject;
+        button.SetActive(true);
+        button.transform.SetParent(parent.transform, false);
+        button.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        button.GetComponent<ScrollButtonButton>().setDeletable(true);
+        Destroy(button.GetComponent<ItemDragHandler>());
+        getApiList().Add(button.GetComponent<IDataAPI>());
+        getBtnList().Add(button);
         if (DateTime.Equals(localDate.Date, currentDate.Date))
         {
             DataObject[] data = await dataAPI.simpleRequest();
@@ -76,6 +86,8 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
                 DateTime end = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("end"));
                 currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
                 saveDataList.Add(currentData);
+                float index = slider.GetComponent<Slider>().value;
+                visualizeTimespanData((int) index);
             }
             else
             {
@@ -83,14 +95,6 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
                 activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             }
         }
-        GameObject button = Instantiate(btn) as GameObject;
-        button.SetActive(true);
-        button.transform.SetParent(parent.transform, false);
-        button.GetComponent<CanvasGroup>().blocksRaycasts = true;
-        button.GetComponent<ScrollButtonButton>().setDeletable(true);
-        Destroy(button.GetComponent<ItemDragHandler>());
-        getApiList().Add(button.GetComponent<IDataAPI>());
-        getBtnList().Add(button);
         loadingIcon.SetActive(false);
     }
 

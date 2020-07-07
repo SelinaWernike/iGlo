@@ -53,7 +53,7 @@ public class DataObject
 
     public override string ToString()
     {
-        return "Koordinaten: " + latitude + ", " + longitude + " Land: " + country + " Werte: " + value + unit;
+        return "Koordinaten: " + latitude + ", " + longitude + " Land: " + country + " Werte: " + value + unit + "Datum: "+ date;
     }
 
 }

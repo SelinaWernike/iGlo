@@ -105,9 +105,9 @@ public class VisualizeDataScript : MonoBehaviour
         values[key].records.Add(new Record(latitude, longitude, data));
     }
 
-      public void ClearByKey(string key)
+    public void ClearByKey(string key)
     {
-         if (values.Count == 1)
+        if (values.Count == 1)
         {
             ClearDrawings();
         }
@@ -120,38 +120,50 @@ public class VisualizeDataScript : MonoBehaviour
 
     public void FinishVisualization()
     {
-        foreach (Visualiuation visualiuation in values.Values)
+        if (values.Count != 0)
         {
-            float min = visualiuation.records.Min(v => v.data);
-            float max = visualiuation.records.Max(v => v.data);
-            foreach (Record record in visualiuation.records)
+            foreach (Visualiuation visualiuation in values.Values)
             {
-                switch (visualiuation.method)
+                if (visualiuation.records != null)
                 {
-                    case VisualizationMethod.SATURATION:
+                    if (visualiuation.records.Count != 0)
+                    {
+                        
+
+
+                    float min = visualiuation.records.Min(v => v.data);
+                    float max = visualiuation.records.Max(v => v.data);
+                    foreach (Record record in visualiuation.records)
+                    {
+                        switch (visualiuation.method)
                         {
-                            float h, s, v;
-                            Color.RGBToHSV(visualiuation.startColor, out h, out s, out v);
-                            float newSaturation = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
-                            DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
-                            break;
+                            case VisualizationMethod.SATURATION:
+                                {
+                                    float h, s, v;
+                                    Color.RGBToHSV(visualiuation.startColor, out h, out s, out v);
+                                    float newSaturation = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
+                                    DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
+                                    break;
+                                }
+                            case VisualizationMethod.RADIUS:
+                                {
+                                    float newRadius = Interpolate(record.data, min, max, radius / 4, radius, visualiuation.curve);
+                                    DrawPoint(record.latitude, record.longitude, newRadius, visualiuation.startColor);
+                                    break;
+                                }
+                            case VisualizationMethod.COLORS:
+                                {
+                                    float proportion = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
+                                    DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(visualiuation.startColor, visualiuation.endColor, proportion));
+                                    break;
+                                }
                         }
-                    case VisualizationMethod.RADIUS:
-                        {
-                            float newRadius = Interpolate(record.data, min, max, radius / 4, radius, visualiuation.curve);
-                            DrawPoint(record.latitude, record.longitude, newRadius, visualiuation.startColor);
-                            break;
-                        }
-                    case VisualizationMethod.COLORS:
-                        {
-                            float proportion = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
-                            DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(visualiuation.startColor, visualiuation.endColor, proportion));
-                            break;
-                        }
+                    }
                 }
+                    }
             }
+            texture.Apply(true);
         }
-        texture.Apply(true);
     }
 
     private void DrawPoint(float latitude, float longitude, float radius, Color color)

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+Closes and opens the Add Menu
+*/ 
 public class AddMenuEvent : MonoBehaviour
 {
     public GameObject menu;

@@ -79,7 +79,9 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         foreach (string location in locations)
         {
             string request = "location=" + location;
-            DataObject[] partResult = await specificRequest(request, now.ToString("yyyy-MM-dd"), now.ToString("yyyy-MM-dd"));
+            DataObject[] partResult = await specificRequest(request, now.ToString("yyyy-MM-dd") + "T00:00:00Z", now.ToString("yyyy-MM-dd") + "T23:59:59Z");
+            if(partResult != null) {
+
             int resultLength = result.Length;
             if (resultLength == 0)
             {
@@ -92,6 +94,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
             }
             Array.Resize<DataObject>(ref result, resultLength + partResult.Length);
             Array.Copy(partResult, 0, result, resultLength, partResult.Length);
+            }
         }
         return result;
     }
@@ -99,16 +102,23 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
     {
         DataObject[][] result = new DataObject[locations.Length][];
+        int counter = 0;
         for (int i = 0; i < locations.Length; i++)
         {
             string request = "location=" + locations[i];
             DataObject[] requestAnswer = await specificRequest(request, startDate, endDate);
+           if (requestAnswer != null)
+           {
             if (requestAnswer.Length != 0)
             {
                 DataObject[] homogenArray = new DataObject[365];
                 Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
-                result[i] = homogenArray;
+                result[counter] = homogenArray;
+                counter++;
+                continue;
             }
+           }
+           
         }
         foreach (DataObject[] obj in result)
         {
@@ -129,19 +139,34 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     {
         return DESCRIPTION;
     }
+
+    /*
+      converts a FullResponse-object into a DataObject  
+    */
     private DataObject[] toData(FullResponse response)
     {
-        DataObject[] obj = new DataObject[response.results.Length];
-        for (int i = 0; i < response.results.Length; i++)
+        if (response != null)
         {
-            if(response.results[i].value < 0) {
-                response.results[i].value = 0;
+            if(response.results.Length != 0) {
+
+            List<DataObject> dataList = new List<DataObject>();
+            DateTime date = DateTime.Parse(response.results[0].date.utc);
+            dataList.Add(new DataObject(response.results[0].coordinates.latitude, response.results[0].coordinates.longitude, response.results[0].country, response.results[0].value, response.results[0].unit, date));
+            Debug.Log(date);
+            for (int i = 1; i < response.results.Length; i++)
+            {
+                if (!DateTime.Equals(date.Date, DateTime.Parse(response.results[i].date.utc).Date))
+                {
+                    date = DateTime.Parse(response.results[i].date.utc);
+                    Debug.Log(date);
+                    dataList.Add(new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, date));
+                }
             }
-            obj[i] = new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, DateTime.Parse(response.results[i].date.utc));
+            return dataList.ToArray();
+            }
         }
-        return obj;
+        return null;
+        
     }
-
-
 
 }

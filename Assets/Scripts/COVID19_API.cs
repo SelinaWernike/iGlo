@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
@@ -57,6 +57,10 @@ public class ShortResponse
     public string Date;
 }
 
+/*
+Shows new cases from multiple countries
+*/
+
 public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string NAME = "COVID-19 Infizierte";
@@ -70,12 +74,15 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         geocode = GetComponent<GeocodeAPI>();
     }
 
+
+
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
         string webURL = URL + "country/" + location + "/status/confirmed/live?from=" + startDate + "&to=" + endDate;
         UnityEngine.Debug.Log(webURL);
         return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
+
 
     public async Task<DataObject[]> specificRequest(string location)
     {
@@ -84,33 +91,42 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
 
-    public async Task<DataObject[][]> dateRequest(string startDate, string endDate) {
+    public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
+    {
         DataObject[][] result = new DataObject[100][];
         int i = 0;
         foreach (string countryCode in GeocodeAPI.cache.Keys)
         {
-            if(i == 99) {
+            if (i == 99)
+            {
                 break;
             }
             DataObject[] requestAnswer = await specificRequest(countryCode, startDate, endDate);
-            if(requestAnswer.Length != 0) {
+            if (requestAnswer.Length != 0)
+            {
                 DataObject[] homogenArray = new DataObject[365];
-            if(requestAnswer.Length >= 365) {
-                Array.Copy(requestAnswer,0,homogenArray,0,365);
-            } else {
-                Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
-            }
+                if (requestAnswer.Length >= 365)
+                {
+                    Array.Copy(requestAnswer, 0, homogenArray, 0, 365);
+                }
+                else
+                {
+                    Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
+                }
                 result[i] = homogenArray;
             }
             i++;
         }
-        foreach(DataObject[] obj in result) {
-            if(obj != null) {
+        foreach (DataObject[] obj in result)
+        {
+            if (obj != null)
+            {
                 return result;
             }
         }
         return null;
     }
+
 
     public async Task<DataObject[]> simpleRequest()
     {
@@ -129,16 +145,34 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return DESCRIPTION;
     }
 
+    /*
+    converts a RootObject into a DataObject[]
+    */
     private DataObject[] toData(RootObject response)
     {
-        DataObject[] obj = new DataObject[response.results.Length];
-        for (int i = 0; i < response.results.Length; i++)
+        if (response != null)
         {
-            obj[i] = new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", DateTime.Parse(response.results[i].Date));
+            List<DataObject> dataList = new List<DataObject>();
+            DateTime date = DateTime.Parse(response.results[0].Date);
+            dataList.Add(new DataObject(response.results[0].Lat, response.results[0].Lon, response.results[0].Country, response.results[0].Cases, "Personen", date));
+            Debug.Log(date);
+            for (int i = 1; i < response.results.Length; i++)
+            {
+                if (!DateTime.Equals(date.Date, DateTime.Parse(response.results[i].Date).Date))
+                {
+                    date = DateTime.Parse(response.results[i].Date).Date;
+                    Debug.Log(date);
+                    dataList.Add(new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", date));
+                }
+            }
+            return dataList.ToArray();
         }
-        return obj;
+        return null;
     }
 
+    /*
+    converts a Response-Object into a DataObject[]
+    */
     private DataObject[] toData(Response response)
     {
         DataObject[] obj = new DataObject[response.Countries.Length];

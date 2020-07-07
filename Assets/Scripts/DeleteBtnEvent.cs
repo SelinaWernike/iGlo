@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+
+/*
+an event-handler
+*/
 public class DeleteBtnEvent : MonoBehaviour
 {
     public GameObject dataMenu;
@@ -8,6 +12,9 @@ public class DeleteBtnEvent : MonoBehaviour
     public GameObject addMenu;
     public GameObject worldMenu;
 
+/*
+activates when "Alle löschen"-Button is clicked and deletes all active APis
+*/
     public void deleteAll()
     {
         List<GameObject> deleteList = dataMenu.GetComponent<ScrollButtonControl>().getBtnList();
@@ -24,7 +31,9 @@ public class DeleteBtnEvent : MonoBehaviour
         earth.GetComponent<VisualizeDataScript>().ClearDrawings();
     }
 
-
+/*
+closes the Data info menu
+*/
     public void closeBtnClick()
     {
         infoMenu.SetActive(false);

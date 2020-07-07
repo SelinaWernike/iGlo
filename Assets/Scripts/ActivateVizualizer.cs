@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using System;
 
+/*
+This class Communicates between  the Visualizer and the MenuController
+@author Selina Wernike
+*/
 public class ActivateVizualizer : MonoBehaviour
 {
     public GameObject worldMenu;
 
+/*
+Deletes all drawings on the current globe.
+*/
     public void deleteDrawings()
     {
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
@@ -12,6 +19,16 @@ public class ActivateVizualizer : MonoBehaviour
         visualizer.ClearDrawings();
     }
 
+/*
+Visualizes all values with a certain index in a two-dimensional array
+@param key Key for the API
+@param method Method for how to draw the Values
+@param curve 
+@param startcolor color for small values and default color
+@param endColor color for high values
+@param timeDatas data from api
+@param index index for current date
+*/
     public void visualize(string key, VisualizationMethod method, AnimationCurve curve, Color startColor, Color endColor, DataObject[][] timeDatas, int index)
     {
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
@@ -57,6 +74,14 @@ public class ActivateVizualizer : MonoBehaviour
         }
     }
 
+/*
+visualizes a singel DataArray
+@param key Key for the API
+@param method Method for how to draw the Values
+@param curve 
+@param startcolor color for small values and default color
+@param endColor color for high values
+*/
     public void visualize(string key, VisualizationMethod method, AnimationCurve curve, Color startColor, Color endColor, DataObject[] obj)
     {
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
@@ -69,6 +94,10 @@ public class ActivateVizualizer : MonoBehaviour
         visualizer.FinishVisualization();
     }
 
+/*
+    Deletes a single visual representation of an API
+    @param key Key for the API that should be deleted.
+*/
     public void deleteVisual(string key)
     {
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
@@ -81,7 +110,10 @@ public class ActivateVizualizer : MonoBehaviour
     **/
     private int checkDate(DataObject[][] data, int index1, int index2)
     {
-        if (data[index1][index2] == null || data[index1].Length < index2 + 1)
+        if(data[index1].Length - 1 < index2) {
+              throw new ArgumentNullException("Datum nicht in Array");
+        }
+        if (data[index1][index2] == null)
         {
             throw new ArgumentNullException("Datum nicht in Array");
         }

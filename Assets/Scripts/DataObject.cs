@@ -1,4 +1,8 @@
 ﻿using System;
+
+/*
+A object with all important informations for the visualizer
+*/
 public class DataObject
 {
     private float latitude;

@@ -4,6 +4,9 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 
+/*
+controlls the API menu
+*/
 public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
 {
     [SerializeField]
@@ -29,6 +32,9 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         activateVisualizer = GetComponent<ActivateVizualizer>();
     }
 
+    /*
+    ??? Something about the worlds and which buttons have to be activated
+    */
     public void onChange(GameObject selected)
     {
         if (currentKey != null && currentKey != selected.name)
@@ -57,6 +63,10 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
+/*
+Adds a button to the right menu and activates the API
+@btn the btn that is added
+*/
     public async Task addButton(GameObject btn)
     {
         loadingIcon.SetActive(true);
@@ -84,31 +94,44 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
             {
                 DateTime start = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("start"));
                 DateTime end = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("end"));
-                currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
+                currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd") + "T00:00:00Z", end.ToString("yyyy-MM-ddThh:mm:ssZ"));
                 saveDataList.Add(currentData);
                 float index = slider.GetComponent<Slider>().value;
                 visualizeTimespanData((int) index);
             }
             else
             {
-                currentData = await dataAPI.dateRequest(currentDate.ToString("yyyy-MM-dd"), currentDate.ToString("yyyy-MM-dd"));
+                currentData = await dataAPI.dateRequest(currentDate.ToString("yyyy-MM-dd") + "T00:00:00", currentDate.ToString("yyyy-MM-dd") + "T23:59:59");
                 activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             }
         }
         loadingIcon.SetActive(false);
     }
 
+/*
+    visualizes the data for a single day on the selected globe
+    @date requested date
+*/
     public async Task drawSingleDay(DateTime date) {
         foreach (GameObject button in getBtnList())
         {
             activateVisualizer.deleteDrawings();
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
-            DataObject[][] currentData = await button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
+            DataObject[][] currentData;
+            if(DateTime.Equals(DateTime.Now.Date, date.Date))
+            {
+                 currentData = await button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd") + "T00:00:00", DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
+            } else {
+                 currentData = await button.GetComponent<IDataAPI>().dateRequest(date.ToString("yyyy-MM-dd") + "T00:00:00", date.ToString("yyyy-MM-dd") + "T23:59:59");
+            }
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             
         }
     }
 
+/*
+deletes a button from the menu.
+*/
     public void deleteAPI()
     {
         if (infoButton != null)
@@ -129,18 +152,35 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         }
     }
 
+/*
+    saves Data from a Timespan into a List.
+    @param start Start-date for Timelaps
+    @param end End-date for Timelaps
+*/
     public async Task saveTimeSpanData(DateTime start, DateTime end)
     {
         activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
-            DataObject[][] currentData = await button.GetComponent<IDataAPI>().dateRequest(start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd"));
+            DataObject[][] currentData;
+            if (DateTime.Equals(end.Date, DateTime.UtcNow.Date))
+            {
+             currentData = await button.GetComponent<IDataAPI>().dateRequest(start.Date.ToString("yyyy-MM-dd") + "T00:00:00Z", DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
+                
+            } else {
+            currentData = await button.GetComponent<IDataAPI>().dateRequest(start.Date.ToString("yyyy-MM-dd") + "T00:00:00Z", end.Date.ToString("yyyy-MM-dd") + "T23:59:59Z");
+
+            }
             saveDataList.Add(currentData);
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
         }
     }
 
+/*
+Visualizes the data from thr list for a specific index
+@param index represents the date
+*/
     public void visualizeTimespanData(float index)
     {
         activateVisualizer.deleteDrawings();

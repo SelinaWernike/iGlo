@@ -12,5 +12,17 @@ namespace System.Collections.Generic
             }
             return val;
         }
+
+        public static void ReplaceOrAdd<TValue>(this IList<TValue> list, int index, TValue value)
+        {
+            if (list.Count <= index)
+            {
+                list.Insert(index, value);
+            }
+            else
+            {
+                list[index] = value;
+            }
+        }
     }
 }

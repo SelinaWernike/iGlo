@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface ISelecionChangeObserver
 {
-    void onChange(GameObject selected);
+    void onChange(GameObject previous, GameObject selected);
 }

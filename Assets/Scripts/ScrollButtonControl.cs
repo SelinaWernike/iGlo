@@ -32,10 +32,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
         activateVisualizer = GetComponent<ActivateVizualizer>();
     }
 
-    /*
-    ??? Something about the worlds and which buttons have to be activated
-    */
-    public void onChange(GameObject selected)
+    public void onChange(GameObject previous, GameObject selected)
     {
         if (currentKey != null && currentKey != selected.name)
         {

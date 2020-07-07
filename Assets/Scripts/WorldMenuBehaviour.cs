@@ -6,7 +6,6 @@ using System;
 
 public class WorldMenuBehaviour : MonoBehaviour {
     public GameObject earth;
-    public GameObject earth2;
     public Toggle timeLapseToggle;
 
     public bool timeLapseIsOn = false;
@@ -25,8 +24,6 @@ public class WorldMenuBehaviour : MonoBehaviour {
 
     public GameObject startDateError;
     public GameObject endDateError;
-
-    private bool singleview = true;
 
     private Vector3 earthPos;
     private Quaternion earthRot;
@@ -50,7 +47,6 @@ public class WorldMenuBehaviour : MonoBehaviour {
         startDateError.SetActive(false);
         endDateError.SetActive(false);
 
-        earth2.SetActive(false);
         earthPos = earth.transform.position;
         earthRot = earth.transform.rotation;
 
@@ -164,36 +160,34 @@ public class WorldMenuBehaviour : MonoBehaviour {
     }
 
     public void resetEarthRotation() {
-        if (singleview) {
-            earth.transform.rotation = earthRot;
-        } else {
-            earth.transform.rotation = earthRot;
-            earth2.transform.rotation = earthRot;
-        }
+        selectedEarth.transform.rotation = earthRot;
     }
 
     public void AddWorld() {
-        singleview = false;
-        earth2.SetActive(true);
         addWorldButton.SetActive(false);
         removeWorldButton.SetActive(true);
         globe2Button.SetActive(true);
 
+        GameObject earthClone = Instantiate(earth);
+        Texture texture = earthClone.GetComponent<Renderer>().material.mainTexture;
+        Texture copied = new Texture2D(texture.width, texture.height, TextureFormat.RGB24, texture.mipmapCount, true);
+        Graphics.CopyTexture(texture, copied);
+        earthClone.GetComponent<Renderer>().material.mainTexture = copied;
+
         earth.transform.position = new Vector3(earthPos.x - 0.25f, earthPos.y, earthPos.z + 0.1f);
-        earth2.transform.position = new Vector3(earthPos.x + 0.25f, earthPos.y, earthPos.z + 0.1f);
+        earthClone.transform.position = new Vector3(earthPos.x + 0.25f, earthPos.y, earthPos.z + 0.1f);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", true);
-        earth2.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
+        earthClone.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
         SetSelectedEarthNoPass(earth);
     }
 
     public void RemoveWorld() {
-        singleview = true;
         addWorldButton.SetActive(true);
         removeWorldButton.SetActive(false);
         globe2Button.SetActive(false);
-        earth2.SetActive(false);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
         SetSelectedEarthNoPass(earth);
+        Destroy(GameObject.Find("Earth(Clone)"));
         earth.transform.position = earthPos;
     }
 
@@ -224,6 +218,7 @@ public class WorldMenuBehaviour : MonoBehaviour {
 
     public void onWorldButtonClick() {
         string worldButton = EventSystem.current.currentSelectedGameObject.name;
+        GameObject earth2 = GameObject.Find("Earth(Clone)");
         {
             switch (worldButton) {
                 case "Globe1Button":

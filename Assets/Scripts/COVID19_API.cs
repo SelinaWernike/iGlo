@@ -94,9 +94,9 @@ public class COVID19_API : MonoBehaviour, IDataAPI
             }
             DataObject[] requestAnswer = await specificRequest(countryCode, startDate, endDate);
             if(requestAnswer.Length != 0) {
-            DataObject[] homogenArray = new DataObject[365];
-            Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
-            result[i] = homogenArray;
+                DataObject[] homogenArray = new DataObject[365];
+                Array.Copy(requestAnswer,0,homogenArray,0,requestAnswer.Length);
+                result[i] = homogenArray;
             }
             i++;
         }

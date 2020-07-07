@@ -496,33 +496,39 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         }
 
         if (timeLapseIsOn) {
-            checkTimeLapseDates();
-        }
-
-        if (inputYear < earliest.Year && inputYear > currentYear || inputYear == earliest.Year && inputMonth < earliest.Month || inputYear == currentYear && inputMonth > currentMonth || inputYear == earliest.Year && inputMonth == earliest.Month && inputDay < earliest.Day || inputYear == currentYear && inputMonth == currentMonth && inputDay > currentDay) {
-            switch (inputFields) {
-                case "start":
-                    startDateError.SetActive(true);
-                    break;
-                case "end":
-                    endDateError.SetActive(true);
-                    break;
-            }
+            checkTimeLapseDates(earliest);
         } else {
-            switch (inputFields) {
-                case "start":
-                    startDateError.SetActive(false);
-                    break;
-                case "end":
-                    endDateError.SetActive(false);
-                    break;
+            if (inputYear < earliest.Year && inputYear > currentYear ||
+                inputYear == earliest.Year && inputMonth < earliest.Month ||
+                inputYear == currentYear && inputMonth > currentMonth ||
+                inputYear == earliest.Year && inputMonth == earliest.Month && inputDay < earliest.Day ||
+                inputYear == currentYear && inputMonth == currentMonth && inputDay > currentDay) {
+
+                switch (inputFields) {
+                    case "start":
+                        startDateError.SetActive(true);
+                        break;
+                    case "end":
+                        endDateError.SetActive(true);
+                        break;
+                }
+            } else {
+                switch (inputFields) {
+                    case "start":
+                        startDateError.SetActive(false);
+                        break;
+                    case "end":
+                        endDateError.SetActive(false);
+                        break;
+                }
             }
         }
     }
 
-    public void checkTimeLapseDates() {
+    public void checkTimeLapseDates(DateTime earliest) {
         string[] currentInputStart = getCurrentInput("start");
         string[] currentInputEnd = getCurrentInput("end");
+        int[] currentDate = getSystemDate();
 
         int inputDayStart = int.Parse(currentInputStart[1]);
         int inputMonthStart = int.Parse(currentInputStart[2]);
@@ -532,12 +538,32 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         int inputMonthEnd = int.Parse(currentInputEnd[2]);
         int inputYearEnd = int.Parse(currentInputEnd[3]);
 
-        if (inputYearStart > inputYearEnd || inputYearStart == inputYearEnd && inputMonthStart > inputMonthEnd || inputYearStart == inputYearEnd && inputMonthStart == inputMonthEnd && inputDayStart > inputDayEnd) {
+        int currentDay = currentDate[0];
+        int currentMonth = currentDate[1];
+        int currentYear = currentDate[2];
+
+        startDateError.SetActive(false);
+        endDateError.SetActive(false);
+
+        if (inputYearStart > inputYearEnd ||
+            inputYearStart == inputYearEnd && inputMonthStart > inputMonthEnd ||
+            inputYearStart == inputYearEnd && inputMonthStart == inputMonthEnd && inputDayStart > inputDayEnd) {
             startDateError.SetActive(true);
             endDateError.SetActive(true);
-        } else {
-            startDateError.SetActive(false);
-            endDateError.SetActive(false);
+        }
+        if (inputYearStart < earliest.Year && inputYearStart > currentYear ||
+              inputYearStart == earliest.Year && inputMonthStart < earliest.Month ||
+              inputYearStart == currentYear && inputMonthStart > currentMonth ||
+              inputYearStart == earliest.Year && inputMonthStart == earliest.Month && inputDayEnd < earliest.Day ||
+              inputYearStart == currentYear && inputMonthStart == currentMonth && inputDayEnd > currentDay) {
+            startDateError.SetActive(true);
+        }
+        if (inputYearEnd < earliest.Year && inputYearEnd > currentYear ||
+                inputYearEnd == earliest.Year && inputMonthEnd < earliest.Month ||
+                inputYearEnd == currentYear && inputMonthEnd > currentMonth ||
+                inputYearEnd == earliest.Year && inputMonthEnd == earliest.Month && inputDayEnd < earliest.Day ||
+                inputYearEnd == currentYear && inputMonthEnd == currentMonth && inputDayEnd > currentDay) {
+            endDateError.SetActive(true);
         }
     }
 

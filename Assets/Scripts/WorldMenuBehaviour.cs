@@ -28,8 +28,8 @@ public class WorldMenuBehaviour : MonoBehaviour {
     private Vector3 earthPos;
     private Quaternion earthRot;
 
-    private DateTime earliestOZ = new DateTime(2017,8,11);
-    private DateTime earliestCOV = new DateTime(2020,1,22);
+    private DateTime earliestOZ = new DateTime(2017, 8, 11);
+    private DateTime earliestCOV = new DateTime(2020, 1, 22);
 
     private GameObject selectedEarth;
     private List<ISelecionChangeObserver> observers = new List<ISelecionChangeObserver>();
@@ -57,6 +57,7 @@ public class WorldMenuBehaviour : MonoBehaviour {
     void Update() {
         if (timeLapseIsOn) {
             setTimeLapseDates();
+            checkTimeLapseDates();
         }
     }
 
@@ -404,9 +405,8 @@ public class WorldMenuBehaviour : MonoBehaviour {
         }
     }
 
-    public async void onApplyButtonClick()
-    {
-       DateTime start = DateTime.Parse(getDate("start"));
+    public async void onApplyButtonClick() {
+        DateTime start = DateTime.Parse(getDate("start"));
         Debug.Log(start.ToString());
         List<IDataAPI> dataList = apiController.GetComponent<ScrollButtonControl>().getApiList();
         if (timeLapseIsOn) {
@@ -418,7 +418,7 @@ public class WorldMenuBehaviour : MonoBehaviour {
             await apiController.GetComponent<ScrollButtonControl>().saveTimeSpanData(start, end);
         } else {
             await apiController.GetComponent<ScrollButtonControl>().drawSingleDay(start);
-        } 
+        }
     }
 
     public string[] getCurrentInput(string inputFields) {
@@ -457,6 +457,7 @@ public class WorldMenuBehaviour : MonoBehaviour {
 
     public void checkForDateError(string inputFields) {
         string[] currentInput = getCurrentInput(inputFields);
+
         int[] currentDate = getSystemDate();
 
         int inputDay = int.Parse(currentInput[1]);
@@ -493,6 +494,27 @@ public class WorldMenuBehaviour : MonoBehaviour {
                     endDateError.SetActive(false);
                     break;
             }
+        }
+    }
+
+    public void checkTimeLapseDates() {
+        string[] currentInputStart = getCurrentInput("start");
+        string[] currentInputEnd = getCurrentInput("end");
+
+        int inputDayStart = int.Parse(currentInputStart[1]);
+        int inputMonthStart = int.Parse(currentInputStart[2]);
+        int inputYearStart = int.Parse(currentInputStart[3]);
+
+        int inputDayEnd = int.Parse(currentInputEnd[1]);
+        int inputMonthEnd = int.Parse(currentInputEnd[2]);
+        int inputYearEnd = int.Parse(currentInputEnd[3]);
+
+        if (inputYearStart > inputYearEnd || inputYearStart == inputYearEnd && inputMonthStart > inputMonthEnd || inputYearStart == inputYearEnd && inputMonthStart == inputMonthEnd && inputDayStart > inputDayEnd) {
+            startDateError.SetActive(true);
+            endDateError.SetActive(true);
+        } else {
+            startDateError.SetActive(false);
+            endDateError.SetActive(false);
         }
     }
 

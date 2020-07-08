@@ -128,39 +128,39 @@ public class VisualizeDataScript : MonoBehaviour
                 {
                     if (visualiuation.records.Count != 0)
                     {
-                        
 
 
-                    float min = visualiuation.records.Min(v => v.data);
-                    float max = visualiuation.records.Max(v => v.data);
-                    foreach (Record record in visualiuation.records)
-                    {
-                        switch (visualiuation.method)
+
+                        float min = visualiuation.records.Min(v => v.data);
+                        float max = visualiuation.records.Max(v => v.data);
+                        foreach (Record record in visualiuation.records)
                         {
-                            case VisualizationMethod.SATURATION:
-                                {
-                                    float h, s, v;
-                                    Color.RGBToHSV(visualiuation.startColor, out h, out s, out v);
-                                    float newSaturation = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
-                                    DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
-                                    break;
-                                }
-                            case VisualizationMethod.RADIUS:
-                                {
-                                    float newRadius = Interpolate(record.data, min, max, radius / 4, radius, visualiuation.curve);
-                                    DrawPoint(record.latitude, record.longitude, newRadius, visualiuation.startColor);
-                                    break;
-                                }
-                            case VisualizationMethod.COLORS:
-                                {
-                                    float proportion = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
-                                    DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(visualiuation.startColor, visualiuation.endColor, proportion));
-                                    break;
-                                }
+                            switch (visualiuation.method)
+                            {
+                                case VisualizationMethod.SATURATION:
+                                    {
+                                        float h, s, v;
+                                        Color.RGBToHSV(visualiuation.startColor, out h, out s, out v);
+                                        float newSaturation = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
+                                        DrawPoint(record.latitude, record.longitude, radius, Color.HSVToRGB(h, newSaturation, v));
+                                        break;
+                                    }
+                                case VisualizationMethod.RADIUS:
+                                    {
+                                        float newRadius = Interpolate(record.data, min, max, radius / 4, radius, visualiuation.curve);
+                                        DrawPoint(record.latitude, record.longitude, newRadius, visualiuation.startColor);
+                                        break;
+                                    }
+                                case VisualizationMethod.COLORS:
+                                    {
+                                        float proportion = Interpolate(record.data, min, max, 0, 1, visualiuation.curve);
+                                        DrawPoint(record.latitude, record.longitude, radius, Color.Lerp(visualiuation.startColor, visualiuation.endColor, proportion));
+                                        break;
+                                    }
+                            }
                         }
                     }
                 }
-                    }
             }
             texture.Apply(true);
         }
@@ -212,6 +212,10 @@ public class VisualizeDataScript : MonoBehaviour
 
     private float Interpolate(float value, float from1, float to1, float from2, float to2, AnimationCurve curve)
     {
+        if (from1 == to1)
+        {
+            return 1.0f;
+        }
         float percentage = (value - from1) / (to1 - from1);
         percentage = curve.Evaluate(percentage);
         return (to2 - from2) * percentage + from2;

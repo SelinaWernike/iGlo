@@ -20,7 +20,7 @@ public class SprinningUI : MonoBehaviour
         if (Time.time - startTime > timeStep)
         {
             Vector3 currentAngles = transform.localEulerAngles;
-            currentAngles.z -= angleChange % 360;
+            currentAngles.z += angleChange % 360;
             transform.localEulerAngles = currentAngles;
             startTime = Time.time;
         }

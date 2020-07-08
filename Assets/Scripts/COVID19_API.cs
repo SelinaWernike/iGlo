@@ -61,7 +61,6 @@ public class ShortResponse
 /*
 Shows new cases from multiple countries
 */
-
 public class COVID19_API : MonoBehaviour, IDataAPI
 {
     private const string NAME = "COVID-19 Infizierte";
@@ -75,10 +74,6 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         geocode = GetComponent<GeocodeAPI>();
     }
 
-
-
-
-
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
         string webURL = URL + "country/" + location + "/status/confirmed/live?from=" + startDate + "&to=" + endDate;
@@ -86,15 +81,13 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"), startDate, endDate);
     }
 
-
-
     public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
     {
         DataObject[][] result = new DataObject[100][];
         int i = 0;
         foreach (string countryCode in GeocodeAPI.cache.Keys)
         {
-            if (i == 99)
+            if (i == result.Length)
             {
                 break;
             }
@@ -141,7 +134,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
         {
             DateTime date = DateTime.Parse(startDate);
             DateTime end = DateTime.Parse(endDate);
-            TimeSpan span = end.Date.Subtract(date.Date);
+            TimeSpan span = end.Subtract(date);
             DataObject[] dataArray = new DataObject[(int) span.Days + 1];
             int counter = 0;
             for (int i = 0; i < dataArray.Length; i++)

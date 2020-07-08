@@ -138,7 +138,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         {
             DateTime date = DateTime.Parse(startDate);
             DateTime end = DateTime.Parse(endDate);
-            TimeSpan span = end.Date.Subtract(date.Date);
+            TimeSpan span = end.Subtract(date);
             DataObject[] dataArray = new DataObject[(int)span.Days + 1];
             int counter = 0;
             for (int i = 0; i < dataArray.Length; i++)

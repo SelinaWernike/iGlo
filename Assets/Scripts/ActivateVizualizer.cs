@@ -48,17 +48,7 @@ Visualizes all values with a certain index in a two-dimensional array
 
                             if (timeDatas[i][index] != null)
                             {
-                                int trueIndex = index;
-                                try
-                                {
-                                    trueIndex = checkDate(timeDatas, i, index);
-                                }
-                                catch (ArgumentNullException e)
-                                {
-                                    Debug.Log(e);
-                                    continue;
-                                }
-                                DataObject obj = timeDatas[i][trueIndex];
+                                DataObject obj = timeDatas[i][index];
                                 Debug.Log(obj);
                                 visualizer.Visualize(key, obj.getLatitude(), obj.getLongitude(), obj.getValue());
                             }

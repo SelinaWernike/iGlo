@@ -11,8 +11,8 @@ public class ItemDropHandler : MonoBehaviour, IDropHandler
         if(RectTransformUtility.RectangleContainsScreenPoint(dataMenu, Input.mousePosition)) {
             if(eventData.pointerDrag != null) {
                 GameObject target = eventData.pointerDrag;
-                await GetComponent<ScrollButtonControl>().addButton(eventData.pointerDrag);
                 target.SetActive(false);
+                await GetComponent<ScrollButtonControl>().addButton(eventData.pointerDrag);
             }
         }
     }

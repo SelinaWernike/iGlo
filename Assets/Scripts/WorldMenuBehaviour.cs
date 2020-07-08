@@ -16,7 +16,6 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
     public GameObject endDateInput;
     public GameObject timeLapseToggleObj;
     public GameObject timeLapseSlider;
-    public GameObject closingScreen;
 
     public GameObject inputFieldDay;
     public GameObject inputFieldMonth;
@@ -48,8 +47,6 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         AddSelectionChangeObserver(this);
         earth.GetComponent<Renderer>().material.SetShaderPassEnabled("Always", false);
         SetSelectedEarthNoPass(earth);
-
-        closingScreen.SetActive(false);
 
         endDateInput.SetActive(false);
         timeLapseSlider.SetActive(false);
@@ -606,20 +603,5 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
         int clampedDay = Mathf.Clamp(inputDay, minDay, maxDay);
 
         return clampedDay;
-    }
-    public void onCloseButtonClick() {
-        string buttonClicked = EventSystem.current.currentSelectedGameObject.name;
-        switch (buttonClicked) {
-            case "CloseButton":
-                closingScreen.SetActive(true);
-                break;
-            case "CloseProgrammButton":
-                Application.Quit();
-                Debug.Log("application is quitting...");
-                break;
-            case "AbortButton":
-                closingScreen.SetActive(false);
-                break;
-        }
     }
 }

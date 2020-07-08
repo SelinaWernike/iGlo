@@ -117,10 +117,8 @@ visualizes a singel DataArray
         {
             throw new ArgumentNullException("Datum nicht in Array");
         }
-        Debug.Log(data[index1][index2].getDate() + " , " + worldMenu.GetComponent<WorldMenuBehaviour>().getCurrentDate());
         if (DateTime.Equals(data[index1][index2].getDate().Date, worldMenu.GetComponent<WorldMenuBehaviour>().getCurrentDate().Date))
         {
-            Debug.Log("true");
             return index2;
         }
         return checkDate(data, index1, index2 + 1);

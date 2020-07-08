@@ -23,7 +23,7 @@ public class ScrollButtonControl : MonoBehaviour, ISelecionChangeObserver
     private Dictionary<string, List<IDataAPI>> apiList = new Dictionary<string, List<IDataAPI>>();
     private Dictionary<string, List<GameObject>> btnList = new Dictionary<string, List<GameObject>>();
     private ActivateVizualizer activateVisualizer;
-    private List<DataObject[][]> saveDataList = new List<DataObject[][]>();
+    private Dictionary<string,DataObject[][]> saveDataList = new Dictionary<string,DataObject[][]>();
     private GameObject infoButton;
 
     private void Awake()
@@ -91,8 +91,8 @@ Adds a button to the right menu and activates the API
             {
                 DateTime start = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("start"));
                 DateTime end = DateTime.Parse(worldMenu.GetComponent<WorldMenuBehaviour>().getDate("end"));
-                currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd") + "T00:00:00Z", end.ToString("yyyy-MM-ddThh:mm:ssZ"));
-                saveDataList.Add(currentData);
+                currentData = await dataAPI.dateRequest(start.ToString("yyyy-MM-dd") + "T00:00:00Z", end.ToString("yyyy-MM-dd") + "T00:00:00Z" );
+                saveDataList.Add(buttonScript.key, currentData);
                 float index = slider.GetComponent<Slider>().value;
                 visualizeTimespanData((int) index);
             }
@@ -144,6 +144,9 @@ deletes a button from the menu.
                 }
             }
             activateVisualizer.deleteVisual(infoButton.GetComponent<ScrollButtonButton>().key);
+            if(saveDataList.Remove(infoButton.GetComponent<ScrollButtonButton>().key)) {
+                Debug.Log("Element entfernt");
+            }
             Destroy(infoButton);
             infoButton = null;
         }
@@ -156,6 +159,8 @@ deletes a button from the menu.
 */
     public async Task saveTimeSpanData(DateTime start, DateTime end)
     {
+
+        saveDataList.Clear();
         activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
@@ -168,7 +173,7 @@ deletes a button from the menu.
             currentData = await button.GetComponent<IDataAPI>().dateRequest(start.Date.ToString("yyyy-MM-dd") + "T00:00:00Z", end.Date.ToString("yyyy-MM-dd") + "T23:59:59Z");
 
             }
-            saveDataList.Add(currentData);
+            saveDataList.Add(button.GetComponent<ScrollButtonButton>().key, currentData);
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
         }
@@ -183,7 +188,7 @@ Visualizes the data from thr list for a specific index
         activateVisualizer.deleteDrawings();
         GameObject[] buttons = getBtnList().ToArray();
         int counter = 0;
-        foreach (DataObject[][] data in saveDataList)
+        foreach (DataObject[][] data in saveDataList.Values)
         {
             ScrollButtonButton buttonScript = buttons[counter].GetComponent<ScrollButtonButton>();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, data, (int)index);

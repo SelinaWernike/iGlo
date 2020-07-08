@@ -87,7 +87,6 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     public async Task<DataObject[]> specificRequest(string location)
     {
         string webURL = URL + "live/country/" + location + "/status/confirmed";
-        UnityEngine.Debug.Log(webURL);
         return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
     }
 
@@ -131,7 +130,6 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     public async Task<DataObject[]> simpleRequest()
     {
         string webURL = URL + "summary";
-        UnityEngine.Debug.Log(webURL);
         return toData(await Utility.RequestAsync<Response>(webURL));
     }
 
@@ -155,7 +153,6 @@ public class COVID19_API : MonoBehaviour, IDataAPI
             List<DataObject> dataList = new List<DataObject>();
             DateTime date = DateTime.Parse(response.results[0].Date);
             dataList.Add(new DataObject(response.results[0].Lat, response.results[0].Lon, response.results[0].Country, response.results[0].Cases, "Personen", date));
-            Debug.Log(date);
             for (int i = 1; i < response.results.Length; i++)
             {
                 if (!DateTime.Equals(date.Date, DateTime.Parse(response.results[i].Date).Date))

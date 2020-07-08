@@ -19,6 +19,7 @@ activates when "Alle löschen"-Button is clicked and deletes all active APis
     {
         List<GameObject> deleteList = dataMenu.GetComponent<ScrollButtonControl>().getBtnList();
         deleteList.ForEach(btn => Destroy(btn));
+        dataMenu.GetComponent<ScrollButtonControl>().ClearTimeSpanData();
         dataMenu.GetComponent<ScrollButtonControl>().setBtnList(new List<GameObject>());
         dataMenu.GetComponent<ScrollButtonControl>().setApiList(new List<IDataAPI>());
 

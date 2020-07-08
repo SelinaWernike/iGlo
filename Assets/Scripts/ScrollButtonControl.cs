@@ -154,6 +154,11 @@ deletes a button from the menu.
         }
     }
 
+    public void ClearTimeSpanData() 
+    {
+        saveDataList.Clear();
+    }
+
 /*
     saves Data from a Timespan into a List.
     @param start Start-date for Timelaps
@@ -162,7 +167,7 @@ deletes a button from the menu.
     public async Task saveTimeSpanData(DateTime start, DateTime end)
     {
         loadingIcon.SetActive(true);
-        saveDataList.Clear();
+        ClearTimeSpanData();
         activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {

@@ -61,7 +61,7 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
 
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
-        string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250&order_by=date", URL, location, startDate, endDate);
+        string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=900&order_by=date", URL, location, startDate, endDate);
         Debug.Log(url);
         return toData(await Utility.RequestAsync<FullResponse>(url), startDate, endDate);
     }
@@ -148,7 +148,13 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
                 }
                 if (DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].date.utc).Date))
                 {
-                    DataObject dataAus = new DataObject(response.results[counter].coordinates.latitude, response.results[counter].coordinates.longitude, response.results[counter].country, response.results[counter].value, response.results[counter].unit, DateTime.Parse(response.results[counter].date.utc));
+                    float value;
+                    if(response.results[counter].value < 0) {
+                        value = 0;
+                    } else {
+                        value = response.results[counter].value;
+                    }
+                    DataObject dataAus = new DataObject(response.results[counter].coordinates.latitude, response.results[counter].coordinates.longitude, response.results[counter].country, value, response.results[counter].unit, DateTime.Parse(response.results[counter].date.utc));
                     dataArray[i] = dataAus;
                     while (DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].date.utc).Date))
                     {

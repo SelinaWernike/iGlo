@@ -24,7 +24,7 @@ public class Results
 }
 
 [Serializable]
-public class Date 
+public class Date
 {
     public string utc;
 }
@@ -58,18 +58,12 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     ,"Los Angeles - N. Mai", "pm25", "US-624","Prishtine - IHMK"
     };
 
-    public async Task<DataObject[]> specificRequest(string location)
-    {
-        string url = URL + "?country=" + location + "&parameter=o3&limit=250";
-        Debug.Log(url);
-        return toData(await Utility.RequestAsync<FullResponse>(url));
-    }
 
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
         string url = String.Format("{0}?{1}&date_from={2}&date_to={3}&parameter=o3&limit=250&order_by=date", URL, location, startDate, endDate);
         Debug.Log(url);
-        return toData(await Utility.RequestAsync<FullResponse>(url));
+        return toData(await Utility.RequestAsync<FullResponse>(url), startDate, endDate);
     }
 
     public async Task<DataObject[]> simpleRequest()
@@ -80,20 +74,21 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         {
             string request = "location=" + location;
             DataObject[] partResult = await specificRequest(request, now.ToString("yyyy-MM-dd") + "T00:00:00Z", now.ToString("yyyy-MM-dd") + "T23:59:59Z");
-            if(partResult != null) {
+            if (partResult != null)
+            {
 
-            int resultLength = result.Length;
-            if (resultLength == 0)
-            {
-                result = partResult;
-                continue;
-            }
-            if (partResult.Length == 0)
-            {
-                continue;
-            }
-            Array.Resize<DataObject>(ref result, resultLength + partResult.Length);
-            Array.Copy(partResult, 0, result, resultLength, partResult.Length);
+                int resultLength = result.Length;
+                if (resultLength == 0)
+                {
+                    result = partResult;
+                    continue;
+                }
+                if (partResult.Length == 0)
+                {
+                    continue;
+                }
+                Array.Resize<DataObject>(ref result, resultLength + partResult.Length);
+                Array.Copy(partResult, 0, result, resultLength, partResult.Length);
             }
         }
         return result;
@@ -107,18 +102,12 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
         {
             string request = "location=" + locations[i];
             DataObject[] requestAnswer = await specificRequest(request, startDate, endDate);
-           if (requestAnswer != null)
-           {
-            if (requestAnswer.Length != 0)
+            if (requestAnswer != null)
             {
-                DataObject[] homogenArray = new DataObject[365];
-                Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
-                result[counter] = homogenArray;
-                counter++;
-                continue;
+                result[i] = requestAnswer;
+                i++;
             }
-           }
-           
+
         }
         foreach (DataObject[] obj in result)
         {
@@ -143,30 +132,41 @@ public class OpenAqAPI : MonoBehaviour, IDataAPI
     /*
       converts a FullResponse-object into a DataObject  
     */
-    private DataObject[] toData(FullResponse response)
+    private DataObject[] toData(FullResponse response, string startDate, string endDate)
     {
         if (response != null)
         {
-            if(response.results.Length != 0) {
-
-            List<DataObject> dataList = new List<DataObject>();
-            DateTime date = DateTime.Parse(response.results[0].date.utc);
-            dataList.Add(new DataObject(response.results[0].coordinates.latitude, response.results[0].coordinates.longitude, response.results[0].country, response.results[0].value, response.results[0].unit, date));
-            Debug.Log(date);
-            for (int i = 1; i < response.results.Length; i++)
+            DateTime date = DateTime.Parse(startDate);
+            DateTime end = DateTime.Parse(endDate);
+            TimeSpan span = end.Date.Subtract(date.Date);
+            DataObject[] dataArray = new DataObject[(int)span.Days + 1];
+            int counter = 0;
+            for (int i = 0; i < dataArray.Length; i++)
             {
-                if (!DateTime.Equals(date.Date, DateTime.Parse(response.results[i].date.utc).Date))
-                {
-                    date = DateTime.Parse(response.results[i].date.utc);
-                    Debug.Log(date);
-                    dataList.Add(new DataObject(response.results[i].coordinates.latitude, response.results[i].coordinates.longitude, response.results[i].country, response.results[i].value, response.results[i].unit, date));
+                if(response.results.Length - 1 < counter) {
+                    break;
                 }
+                if (DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].date.utc).Date))
+                {
+                    DataObject dataAus = new DataObject(response.results[counter].coordinates.latitude, response.results[counter].coordinates.longitude, response.results[counter].country, response.results[counter].value, response.results[counter].unit, DateTime.Parse(response.results[counter].date.utc));
+                    dataArray[i] = dataAus;
+                    while (DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].date.utc).Date))
+                    {
+                        counter++;
+                        if (response.results.Length - 1 < counter)
+                        {
+                            break;
+                        }
+                    }
+                }
+                date = date.AddDays(1f);
             }
-            return dataList.ToArray();
-            }
+            return dataArray;
         }
-        return null;
-        
+        else
+        {
+            return null;
+        }
     }
 
 }

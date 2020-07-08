@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 
 [Serializable]
@@ -68,7 +69,7 @@ public class COVID19_API : MonoBehaviour, IDataAPI
 
     private const string URL = "https://api.covid19api.com/";
     private GeocodeAPI geocode;
-
+    
     private void Awake()
     {
         geocode = GetComponent<GeocodeAPI>();
@@ -76,19 +77,16 @@ public class COVID19_API : MonoBehaviour, IDataAPI
 
 
 
+
+
     public async Task<DataObject[]> specificRequest(string location, string startDate, string endDate)
     {
         string webURL = URL + "country/" + location + "/status/confirmed/live?from=" + startDate + "&to=" + endDate;
         UnityEngine.Debug.Log(webURL);
-        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
+        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"), startDate, endDate);
     }
 
 
-    public async Task<DataObject[]> specificRequest(string location)
-    {
-        string webURL = URL + "live/country/" + location + "/status/confirmed";
-        return toData(await Utility.RequestAsync<RootObject>(webURL, "{\"results\":", "}"));
-    }
 
     public async Task<DataObject[][]> dateRequest(string startDate, string endDate)
     {
@@ -101,20 +99,10 @@ public class COVID19_API : MonoBehaviour, IDataAPI
                 break;
             }
             DataObject[] requestAnswer = await specificRequest(countryCode, startDate, endDate);
-            if (requestAnswer.Length != 0)
-            {
-                DataObject[] homogenArray = new DataObject[365];
-                if (requestAnswer.Length >= 365)
-                {
-                    Array.Copy(requestAnswer, 0, homogenArray, 0, 365);
-                }
-                else
-                {
-                    Array.Copy(requestAnswer, 0, homogenArray, 0, requestAnswer.Length);
-                }
-                result[i] = homogenArray;
-            }
+                if(requestAnswer != null) {
+                result[i] = requestAnswer;
             i++;
+            }
         }
         foreach (DataObject[] obj in result)
         {
@@ -122,8 +110,9 @@ public class COVID19_API : MonoBehaviour, IDataAPI
             {
                 return result;
             }
-        }
-        return null;
+            }
+            return null;
+    
     }
 
 
@@ -146,25 +135,38 @@ public class COVID19_API : MonoBehaviour, IDataAPI
     /*
     converts a RootObject into a DataObject[]
     */
-    private DataObject[] toData(RootObject response)
+    private DataObject[] toData(RootObject response, string startDate, string endDate)
     {
         if (response != null)
         {
-            List<DataObject> dataList = new List<DataObject>();
-            DateTime date = DateTime.Parse(response.results[0].Date);
-            dataList.Add(new DataObject(response.results[0].Lat, response.results[0].Lon, response.results[0].Country, response.results[0].Cases, "Personen", date));
-            for (int i = 1; i < response.results.Length; i++)
+            DateTime date = DateTime.Parse(startDate);
+            DateTime end = DateTime.Parse(endDate);
+            TimeSpan span = end.Date.Subtract(date.Date);
+            DataObject[] dataArray = new DataObject[(int) span.Days + 1];
+            int counter = 0;
+            for (int i = 0; i < dataArray.Length; i++)
             {
-                if (!DateTime.Equals(date.Date, DateTime.Parse(response.results[i].Date).Date))
-                {
-                    date = DateTime.Parse(response.results[i].Date).Date;
-                    Debug.Log(date);
-                    dataList.Add(new DataObject(response.results[i].Lat, response.results[i].Lon, response.results[i].Country, response.results[i].Cases, "Personen", date));
+                 if(response.results.Length - 1 < counter) {
+                    break;
                 }
+               if(DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].Date).Date)) {
+                   DataObject dataAus = new DataObject(response.results[counter].Lat, response.results[counter].Lon, response.results[counter].Country, response.results[counter].Cases, "Personen", date);
+                   dataArray[i] = dataAus;
+                   
+                   while(DateTime.Equals(date.Date, DateTime.Parse(response.results[counter].Date).Date)) {
+                       counter++;
+                       if(response.results.Length - 1 < counter) {
+                    break;
+                }
+                   }
+               }
+               date = date.AddDays(1f); 
             }
-            return dataList.ToArray();
+            return dataArray;
+        }else
+        {
+            return null;
         }
-        return null;
     }
 
     /*

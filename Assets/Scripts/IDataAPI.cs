@@ -13,7 +13,7 @@ request for a single location
 @param location Requested Location
 returns DataObject[] an array with all Dates for one location
 */
-    Task<DataObject[]> specificRequest(string location);
+   // Task<DataObject[]> specificRequest(string location);
 
  /*   request for a specific location and a specific start and end date
 @param location Requested Location

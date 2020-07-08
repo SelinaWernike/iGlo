@@ -36,7 +36,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
     private Vector3 earthPos;
     private Quaternion earthRot;
 
-    private DateTime earliestOZ = new DateTime(2017, 8, 11);
+    private DateTime earliestOZ = new DateTime(2019, 01, 01);
     private DateTime earliestCOV = new DateTime(2020, 1, 22);
 
     private GameObject selectedEarth;
@@ -360,7 +360,7 @@ public class WorldMenuBehaviour : MonoBehaviour, ISelecionChangeObserver {
                 }
                 break;
             case "year":
-                if (number > 2016 && number <= currentDate[2]) {
+                if (number > 2018 && number <= currentDate[2]) {
                     isValidNumber = true;
                 }
                 break;

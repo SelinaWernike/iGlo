@@ -110,9 +110,10 @@ Adds a button to the right menu and activates the API
     @date requested date
 */
     public async Task drawSingleDay(DateTime date) {
+        loadingIcon.SetActive(true);
+        activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
-            activateVisualizer.deleteDrawings();
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             DataObject[][] currentData;
             if(DateTime.Equals(DateTime.Now.Date, date.Date))
@@ -124,6 +125,7 @@ Adds a button to the right menu and activates the API
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
             
         }
+        loadingIcon.SetActive(false);
     }
 
 /*
@@ -152,6 +154,11 @@ deletes a button from the menu.
         }
     }
 
+    public void ClearTimeSpanData() 
+    {
+        saveDataList.Clear();
+    }
+
 /*
     saves Data from a Timespan into a List.
     @param start Start-date for Timelaps
@@ -159,8 +166,8 @@ deletes a button from the menu.
 */
     public async Task saveTimeSpanData(DateTime start, DateTime end)
     {
-
-        saveDataList.Clear();
+        loadingIcon.SetActive(true);
+        ClearTimeSpanData();
         activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
@@ -177,13 +184,14 @@ deletes a button from the menu.
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             activateVisualizer.visualize(buttonScript.key, buttonScript.method, buttonScript.interpolationCurve, buttonScript.startColor, buttonScript.endColor, currentData, 0);
         }
+        loadingIcon.SetActive(false);
     }
 
 /*
 Visualizes the data from thr list for a specific index
 @param index represents the date
 */
-    public void visualizeTimespanData(float index)
+    private void visualizeTimespanData(float index)
     {
         activateVisualizer.deleteDrawings();
         GameObject[] buttons = getBtnList().ToArray();

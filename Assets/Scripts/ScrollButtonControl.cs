@@ -111,9 +111,9 @@ Adds a button to the right menu and activates the API
 */
     public async Task drawSingleDay(DateTime date) {
         loadingIcon.SetActive(true);
+        activateVisualizer.deleteDrawings();
         foreach (GameObject button in getBtnList())
         {
-            activateVisualizer.deleteDrawings();
             ScrollButtonButton buttonScript = button.GetComponent<ScrollButtonButton>();
             DataObject[][] currentData;
             if(DateTime.Equals(DateTime.Now.Date, date.Date))

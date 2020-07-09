@@ -77,11 +77,18 @@ visualizes a singel DataArray
         GameObject earth = worldMenu.GetComponent<WorldMenuBehaviour>().GetSelectedEarth();
         VisualizeDataScript visualizer = earth.GetComponent<VisualizeDataScript>();
         visualizer.PrepareVisualization(key, method, curve, startColor, endColor);
+        if (obj != null) {
         foreach (DataObject dataObj in obj)
         {
+            if(dataObj != null) {
             visualizer.Visualize(key, dataObj.getLatitude(), dataObj.getLongitude(), dataObj.getValue());
+            }
         }
         visualizer.FinishVisualization();
+        }
+        
+            
+        
     }
 
 /*

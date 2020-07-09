@@ -67,7 +67,7 @@ public class ShowDetailsForPointScript : MonoBehaviour, IPointerDownHandler, IPo
                         string location = result.components.country;
                         dataObjects = await api.specificRequest(location, date + "T00:00:00Z", date + "T23:59:59Z");
                     }
-                    bool dataPresent = dataObjects != null && dataObjects.Length == 1;
+                    bool dataPresent = dataObjects != null && dataObjects.Length == 1 && dataObjects[0] != null;
                     info += dataPresent ? dataObjects[0].getValue() + " " + dataObjects[0].getUnit() + "\n" : "Keine Daten verfügbar!\n";
                 }
                 Text text = details.GetComponentInChildren<Text>();

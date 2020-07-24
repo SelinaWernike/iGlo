@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.IO;
 using System;
-using System.Timers;
 using System.Collections.Generic;
 
 public static class Utility
@@ -43,8 +42,9 @@ public static class Utility
         if (rateLimits.ContainsKey(host))
         {
             long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long difference = rateLimits[host] - now;
-            await Task.Delay((int)(difference + 1) * 1000);
+            long differenceSeconds = Math.Max(rateLimits[host] - now - 1, 0);
+            long differenceMilliseconds = 1000 - DateTimeOffset.UtcNow.Millisecond;
+            await Task.Delay((int)(differenceSeconds * 1000 + differenceMilliseconds));
         }
     }
 
@@ -58,7 +58,7 @@ public static class Utility
             if (remaining == 0)
             {
                 rateLimits[host] = long.Parse(headers["X-Ratelimit-Reset"]);
-                Debug.Log("We have to wait until: " + rateLimits[host]);
+                Debug.Log("We have to wait until: " + rateLimits[host] + ", Current Time: " + DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             }
             else
             {
